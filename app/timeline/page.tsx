@@ -6,14 +6,11 @@ export const metadata = { title: t("timeline.title") };
 
 export default function TimelinePage() {
   return (
-    <PageShell page="timeline">
-      <header className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {t("timeline.title")}
-        </h1>
-        <p className="mt-1 text-sm opacity-60">{t("timeline.description")}</p>
-      </header>
-
+    <PageShell
+      page="timeline"
+      bannerTitle={t("timeline.title")}
+      bannerDescription={t("timeline.description")}
+    >
       <ol className="relative border-s border-base-300 ps-6">
         {timeline.map((entry) => (
           <li key={entry.date} className="mb-8 last:mb-0">

@@ -10,14 +10,11 @@ export default function CategoriesPage() {
   const categories = getCategoryList().filter((item) => item.name);
 
   return (
-    <PageShell page="categories">
-      <header className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {t("categories.title")}
-        </h1>
-        <p className="mt-1 text-sm opacity-60">{t("categories.description")}</p>
-      </header>
-
+    <PageShell
+      page="categories"
+      bannerTitle={t("categories.title")}
+      bannerDescription={t("categories.description")}
+    >
       <ul className="divide-y divide-base-300">
         {categories.map((item) => (
           <li key={item.name}>

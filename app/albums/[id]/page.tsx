@@ -32,9 +32,13 @@ export default async function AlbumDetail({ params }: Props) {
   if (!album) notFound();
 
   return (
-    <PageShell page="albums">
+    <PageShell
+      page="albums"
+      bannerTitle={album.title}
+      bannerDescription={`${formatDate(album.published)} · ${t("albums.photos", { count: album.photos.length })}`}
+    >
       <article>
-        <header className="mb-8">
+        <div className="mb-6">
           <Link
             href="/albums"
             transitionTypes={["nav-back"]}
@@ -42,14 +46,7 @@ export default async function AlbumDetail({ params }: Props) {
           >
             ← {t("albums.title")}
           </Link>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight">
-            {album.title}
-          </h1>
-          <p className="mt-1 text-sm opacity-60">
-            {formatDate(album.published)} ·{" "}
-            {t("albums.photos", { count: album.photos.length })}
-          </p>
-        </header>
+        </div>
 
         {album.description ? (
           <p className="mb-6 text-sm opacity-70">{album.description}</p>

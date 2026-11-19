@@ -30,7 +30,7 @@ export default async function PageNumber({ params }: Props) {
   if (posts.length === 0) notFound();
 
   return (
-    <PageShell page="home" wide>
+    <PageShell page="home" wide home>
       <PostList posts={posts} />
       <Pagination page={page} totalPages={totalPages} />
     </PageShell>

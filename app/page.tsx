@@ -1,4 +1,3 @@
-import { Banner } from "@/src/components/organisms/Banner";
 import { PageShell } from "@/src/components/organisms/PageShell";
 import { PostList } from "@/src/components/organisms/PostList";
 import { Pagination } from "@/src/components/molecules/Pagination";
@@ -14,8 +13,7 @@ export default function HomePage() {
 
   return (
     <>
-      <Banner />
-      <PageShell page="home" wide>
+      <PageShell page="home" wide home>
         <PostList posts={posts} />
         <Pagination page={page} totalPages={totalPages} />
       </PageShell>

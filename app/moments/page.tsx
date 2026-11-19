@@ -2,6 +2,7 @@ import { Suspense } from "react";
 
 import { MomentCard } from "@/src/components/molecules/MomentCard";
 import { PageShell } from "@/src/components/organisms/PageShell";
+import { PhotoSwipeProvider } from "@/src/components/organisms/PhotoSwipeProvider";
 import { getMoments } from "@/src/content/moments";
 import { t } from "@/src/i18n";
 import { isUnlocked } from "@/src/server/auth/session";
@@ -41,14 +42,11 @@ async function MomentBodies() {
 
 export default function MomentsPage() {
   return (
-    <PageShell page="moments">
-      <header className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {t("moments.title")}
-        </h1>
-        <p className="mt-1 text-sm opacity-60">{t("moments.description")}</p>
-      </header>
-
+    <PageShell
+      page="moments"
+      bannerTitle={t("moments.title")}
+      bannerDescription={t("moments.description")}
+    >
       <Suspense
         fallback={
           <p className="py-8 text-sm opacity-60">{t("common.loading")}</p>
@@ -56,6 +54,8 @@ export default function MomentsPage() {
       >
         <MomentBodies />
       </Suspense>
+
+      <PhotoSwipeProvider />
     </PageShell>
   );
 }

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -57,14 +56,17 @@ export default async function PostPage({ params }: Props) {
     updatedAgeDays >= articleConfig.lastUpdated.minimumAgeDays;
 
   return (
-    <PageShell page="post" toc={<TocWidget headings={headings} />}>
+    <PageShell
+      page="post"
+      toc={<TocWidget headings={headings} />}
+      bannerTitle={post.title}
+      bannerDescription={post.description || undefined}
+      bannerImage={post.image}
+      bannerImageTransitionName={`cover-${post._meta.path}`}
+    >
       <article className="pb-4">
         <header className="mb-8">
-          <h1 className="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
-            {post.title}
-          </h1>
-
-          <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm opacity-70">
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm opacity-70">
             <span>{t("post.published")}</span>
             <time dateTime={formatDateIso(post.published)}>
               {formatDate(post.published)}
@@ -107,20 +109,6 @@ export default async function PostPage({ params }: Props) {
             </ul>
           ) : null}
         </header>
-
-        {post.image ? (
-          <div className="relative mb-8 aspect-[16/9] overflow-hidden rounded-box bg-base-200">
-            <Image
-              src={post.image}
-              alt=""
-              fill
-              priority
-              sizes="(max-width: 768px) 100vw, 48rem"
-              className="object-cover"
-              style={{ viewTransitionName: `cover-${post._meta.path}` }}
-            />
-          </div>
-        ) : null}
 
         <Suspense
           fallback={

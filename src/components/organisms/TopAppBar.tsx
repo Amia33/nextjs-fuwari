@@ -73,7 +73,7 @@ export function TopAppBar() {
       }`}
       style={{ viewTransitionName: "site-header" }}
     >
-      <nav className="mx-auto flex h-16 w-full max-w-6xl items-center gap-4 px-4">
+      <nav className="mx-auto flex h-16 w-full max-w-[96rem] items-center gap-4 px-4">
         <Logo />
 
         <Suspense fallback={<NavLinksFallback />}>

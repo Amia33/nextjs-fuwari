@@ -34,18 +34,18 @@ export default async function ArchivePage({ searchParams }: Props) {
   }
 
   return (
-    <PageShell page="archive">
-      <header className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {t("archive.title")}
-        </h1>
-        <p className="mt-1 text-sm opacity-60">{label}</p>
-        {tagValue || categoryValue ? (
-          <Link href="/archive" className="btn btn-ghost btn-xs mt-3">
+    <PageShell
+      page="archive"
+      bannerTitle={t("archive.title")}
+      bannerDescription={label}
+    >
+      {tagValue || categoryValue ? (
+        <div className="mb-6">
+          <Link href="/archive" className="btn btn-ghost btn-xs">
             {t("archive.clear")}
           </Link>
-        ) : null}
-      </header>
+        </div>
+      ) : null}
 
       <ArchiveList posts={posts} />
     </PageShell>

@@ -10,14 +10,11 @@ export default function TagsPage() {
   const tags = getTagList();
 
   return (
-    <PageShell page="tags">
-      <header className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {t("tags.title")}
-        </h1>
-        <p className="mt-1 text-sm opacity-60">{t("tags.description")}</p>
-      </header>
-
+    <PageShell
+      page="tags"
+      bannerTitle={t("tags.title")}
+      bannerDescription={t("tags.description")}
+    >
       <ul className="flex flex-wrap gap-2">
         {tags.map((item) => (
           <li key={item.name}>

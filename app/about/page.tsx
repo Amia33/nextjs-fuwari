@@ -12,11 +12,8 @@ export default function AboutPage() {
   if (!doc) notFound();
 
   return (
-    <PageShell page="about">
+    <PageShell page="about" bannerTitle={doc.title}>
       <article>
-        <header className="mb-8">
-          <h1 className="text-2xl font-semibold tracking-tight">{doc.title}</h1>
-        </header>
         <Mdx code={doc.mdx} />
       </article>
     </PageShell>

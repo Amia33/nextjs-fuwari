@@ -10,14 +10,11 @@ export default function SeriesPage() {
   const series = getSeriesList();
 
   return (
-    <PageShell page="series">
-      <header className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {t("series.title")}
-        </h1>
-        <p className="mt-1 text-sm opacity-60">{t("series.description")}</p>
-      </header>
-
+    <PageShell
+      page="series"
+      bannerTitle={t("series.title")}
+      bannerDescription={t("series.description")}
+    >
       <div className="space-y-3">
         {series.map((group) => (
           <details

@@ -27,33 +27,33 @@ export default async function SeriesDetail({ params }: Props) {
   if (!doc && posts.length === 0) notFound();
 
   return (
-    <PageShell page="series">
+    <PageShell
+      page="series"
+      bannerTitle={doc?.title ?? slug}
+      bannerDescription={t("series.posts", { count: posts.length })}
+    >
       <article>
-        <header className="mb-8">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            {doc?.title ?? slug}
-          </h1>
-          <p className="mt-1 text-sm opacity-60">
-            {t("series.posts", { count: posts.length })}
-          </p>
-        </header>
-
         {doc ? (
           <Mdx code={doc.mdx} className="prose mb-10 text-spacing-trim" />
         ) : null}
 
-        <ol className="space-y-3 border-t border-base-300 pt-6">
+        {/* Numbering is positional: the list is already ordered by each
+            post's `seriesOrder`, so the index is the reading order. */}
+        <ol className="divide-y divide-base-300 border-t border-base-300">
           {posts.map((post, index) => (
-            <li key={post._meta.path} className="flex gap-3">
-              <span className="text-sm tabular-nums opacity-40">
-                {index + 1}.
-              </span>
+            <li key={post._meta.path}>
               <Link
                 href={`/posts/${post._meta.path}`}
                 transitionTypes={["nav-forward"]}
-                className="text-sm hover:text-primary"
+                className="flex items-baseline gap-3 py-3 hover:text-primary"
               >
-                {post.title}
+                <span
+                  aria-hidden="true"
+                  className="text-sm font-medium tabular-nums opacity-40"
+                >
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="text-sm">{post.title}</span>
               </Link>
             </li>
           ))}

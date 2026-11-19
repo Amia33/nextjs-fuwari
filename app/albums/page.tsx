@@ -11,14 +11,11 @@ export default function AlbumsPage() {
   const albums = getAlbums();
 
   return (
-    <PageShell page="albums">
-      <header className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {t("albums.title")}
-        </h1>
-        <p className="mt-1 text-sm opacity-60">{t("albums.description")}</p>
-      </header>
-
+    <PageShell
+      page="albums"
+      bannerTitle={t("albums.title")}
+      bannerDescription={t("albums.description")}
+    >
       {albums.length === 0 ? (
         <p className="py-12 text-center text-sm opacity-60">
           {t("albums.empty")}
