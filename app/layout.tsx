@@ -3,7 +3,6 @@ import { ViewTransition } from "react";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
-import { Footer } from "@/src/components/organisms/Footer";
 import { themeScript } from "@/src/components/organisms/ThemeToggle";
 import { TopAppBar } from "@/src/components/organisms/TopAppBar";
 import { analyticsConfig } from "@/src/config/analytics";
@@ -34,7 +33,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           className="absolute top-0 h-1 w-full"
         />
         <TopAppBar />
-        <main id="content" className="flex-1">
+        {/* Pages own the <main> region so the footer can sit inside the
+            content column while the sidebars flank it. */}
+        <div className="flex-1">
           <ViewTransition
             enter={{
               "nav-forward": "nav-forward",
@@ -50,8 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           >
             {children}
           </ViewTransition>
-          <Footer />
-        </main>
+        </div>
         {analyticsConfig.vercel.analytics ? <Analytics /> : null}
         {analyticsConfig.vercel.speedInsights ? <SpeedInsights /> : null}
       </body>

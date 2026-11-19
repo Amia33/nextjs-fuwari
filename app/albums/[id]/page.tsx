@@ -1,8 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 import { Mdx } from "@/src/components/molecules/Mdx";
+import { PageShell } from "@/src/components/organisms/PageShell";
+import { ProtectedBody } from "@/src/components/organisms/ProtectedBody";
 import { PhotoSwipeProvider } from "@/src/components/organisms/PhotoSwipeProvider";
 import { getAlbumById, getAlbums } from "@/src/content/albums";
 import { formatDate, t } from "@/src/i18n";
@@ -29,56 +32,73 @@ export default async function AlbumDetail({ params }: Props) {
   if (!album) notFound();
 
   return (
-    <article className="mx-auto w-full max-w-3xl px-4 py-10">
-      <header className="mb-8">
-        <Link
-          href="/albums"
-          transitionTypes={["nav-back"]}
-          className="text-sm opacity-60 hover:opacity-100"
+    <PageShell page="albums">
+      <article>
+        <header className="mb-8">
+          <Link
+            href="/albums"
+            transitionTypes={["nav-back"]}
+            className="text-sm opacity-60 hover:opacity-100"
+          >
+            ← {t("albums.title")}
+          </Link>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight">
+            {album.title}
+          </h1>
+          <p className="mt-1 text-sm opacity-60">
+            {formatDate(album.published)} ·{" "}
+            {t("albums.photos", { count: album.photos.length })}
+          </p>
+        </header>
+
+        {album.description ? (
+          <p className="mb-6 text-sm opacity-70">{album.description}</p>
+        ) : null}
+
+        <Suspense
+          fallback={
+            <p className="py-8 text-sm opacity-60">{t("common.loading")}</p>
+          }
         >
-          ← {t("albums.title")}
-        </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight">
-          {album.title}
-        </h1>
-        <p className="mt-1 text-sm opacity-60">
-          {formatDate(album.published)} ·{" "}
-          {t("albums.photos", { count: album.photos.length })}
-        </p>
-      </header>
+          <ProtectedBody
+            kind="album"
+            id={album._meta.path}
+            code={album.mdx}
+            html={
+              <>
+                <ul className="columns-1 gap-3 sm:columns-2 [&>li]:mb-3">
+                  {album.photos.map((photo) => (
+                    <li key={photo.src} className="break-inside-avoid">
+                      <a
+                        href={photo.src}
+                        className="block overflow-hidden rounded-box"
+                        data-pswp-src={photo.src}
+                        data-pswp-width="1600"
+                        data-pswp-height="1067"
+                      >
+                        <Image
+                          src={photo.src}
+                          alt={photo.alt}
+                          width={800}
+                          height={533}
+                          sizes="(max-width: 640px) 100vw, 24rem"
+                          className="h-auto w-full"
+                        />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
 
-      {album.description ? (
-        <p className="mb-6 text-sm opacity-70">{album.description}</p>
-      ) : null}
+                <div className="mt-8">
+                  <Mdx code={album.mdx} />
+                </div>
+              </>
+            }
+          />
+        </Suspense>
 
-      <ul className="columns-1 gap-3 sm:columns-2 [&>li]:mb-3">
-        {album.photos.map((photo) => (
-          <li key={photo.src} className="break-inside-avoid">
-            <a
-              href={photo.src}
-              className="block overflow-hidden rounded-box"
-              data-pswp-src={photo.src}
-              data-pswp-width="1600"
-              data-pswp-height="1067"
-            >
-              <Image
-                src={photo.src}
-                alt={photo.alt}
-                width={800}
-                height={533}
-                sizes="(max-width: 640px) 100vw, 24rem"
-                className="h-auto w-full"
-              />
-            </a>
-          </li>
-        ))}
-      </ul>
-
-      <div className="mt-8">
-        <Mdx code={album.mdx} />
-      </div>
-
-      <PhotoSwipeProvider />
-    </article>
+        <PhotoSwipeProvider />
+      </article>
+    </PageShell>
   );
 }

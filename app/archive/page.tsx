@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { ArchiveList } from "@/src/components/organisms/ArchiveList";
+import { PageShell } from "@/src/components/organisms/PageShell";
 import {
   getPostsByCategory,
   getPostsByTag,
@@ -33,7 +34,7 @@ export default async function ArchivePage({ searchParams }: Props) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-10">
+    <PageShell page="archive">
       <header className="mb-8">
         <h1 className="text-2xl font-semibold tracking-tight">
           {t("archive.title")}
@@ -47,6 +48,6 @@ export default async function ArchivePage({ searchParams }: Props) {
       </header>
 
       <ArchiveList posts={posts} />
-    </div>
+    </PageShell>
   );
 }

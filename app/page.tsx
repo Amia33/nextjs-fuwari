@@ -1,5 +1,5 @@
 import { Banner } from "@/src/components/organisms/Banner";
-import { Sidebar } from "@/src/components/organisms/Sidebar";
+import { PageShell } from "@/src/components/organisms/PageShell";
 import { PostList } from "@/src/components/organisms/PostList";
 import { Pagination } from "@/src/components/molecules/Pagination";
 import { PhotoSwipeProvider } from "@/src/components/organisms/PhotoSwipeProvider";
@@ -15,15 +15,10 @@ export default function HomePage() {
   return (
     <>
       <Banner />
-      <div className="mx-auto w-full max-w-6xl px-4">
-        <div className="flex gap-8 py-10">
-          <main className="min-w-0 flex-1">
-            <PostList posts={posts} />
-            <Pagination page={page} totalPages={totalPages} />
-          </main>
-          <Sidebar />
-        </div>
-      </div>
+      <PageShell page="home" wide>
+        <PostList posts={posts} />
+        <Pagination page={page} totalPages={totalPages} />
+      </PageShell>
       <PhotoSwipeProvider />
     </>
   );

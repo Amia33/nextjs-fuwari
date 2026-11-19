@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { getAlbums } from "@/src/content/albums";
+import { PageShell } from "@/src/components/organisms/PageShell";
 import { formatDate, t } from "@/src/i18n";
 
 export const metadata = { title: t("albums.title") };
@@ -10,7 +11,7 @@ export default function AlbumsPage() {
   const albums = getAlbums();
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-10">
+    <PageShell page="albums">
       <header className="mb-8">
         <h1 className="text-2xl font-semibold tracking-tight">
           {t("albums.title")}
@@ -32,7 +33,7 @@ export default function AlbumsPage() {
                 className="group block"
               >
                 <div className="relative aspect-square overflow-hidden rounded-box bg-base-200">
-                  {album.cover ? (
+                  {album.cover && !album.passwordProtected ? (
                     <Image
                       src={album.cover}
                       alt=""
@@ -43,6 +44,10 @@ export default function AlbumsPage() {
                         viewTransitionName: `cover-${album._meta.path}`,
                       }}
                     />
+                  ) : album.passwordProtected ? (
+                    <div className="flex h-full items-center justify-center text-xs opacity-40">
+                      <span aria-hidden="true">🔒</span>
+                    </div>
                   ) : null}
                 </div>
                 <p className="mt-2 truncate text-sm font-medium">
@@ -57,6 +62,6 @@ export default function AlbumsPage() {
           ))}
         </ul>
       )}
-    </div>
+    </PageShell>
   );
 }

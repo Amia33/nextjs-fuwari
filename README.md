@@ -45,6 +45,11 @@ Admonitions are **authored as components**, not derived from markdown syntax. Gi
 
 Posts, moments and albums can be gated. Only a hash is ever stored:
 
+The repository ships three working examples: `content/posts/private-note.mdx`,
+`content/moments/2026-11-17-unfinished.mdx`, and `content/albums/private-album.mdx` (passwords
+`secret123`, `moment-pass`, and `album-pass` respectively — fixtures for local testing only;
+delete them before publishing).
+
 ```bash
 pnpm hash-password          # prompts twice without echoing, prints the YAML
 pnpm hash-password --check '<phc>'   # verify an existing hash later
@@ -70,17 +75,19 @@ openssl rand -base64 32
 
 Unlocking sets an HttpOnly, SameSite=Lax cookie scoped to that one item, valid for 7 days.
 Verification is server-side; protected bodies never appear in the prerendered HTML, the RSC
-payload, RSS/Atom, the sitemap, or `llms.txt`.
+payload, the sitemap, or any other generated feed.
 
 ## Configuration
 
-| File                      | Controls                                          |
-| ------------------------- | ------------------------------------------------- |
-| `src/config/site.ts`      | title, url, **language**, banner, timezone        |
-| `src/config/profile.ts`   | avatar, name, bio, links                          |
-| `src/config/article.ts`   | last-updated threshold, license                   |
-| `src/config/post-list.ts` | page size                                         |
-| `src/config/analytics.ts` | Vercel Analytics / Speed Insights on-off switches |
+| File                         | Controls                                          |
+| ---------------------------- | ------------------------------------------------- |
+| `src/config/site.ts`         | title, url, **language**, banner, timezone        |
+| `src/config/profile.ts`      | avatar, name, bio, links                          |
+| `src/config/article.ts`      | last-updated notice threshold                     |
+| `src/config/announcement.ts` | sidebar announcement text, link, dismissable      |
+| `src/config/sidebar.ts`      | column arrangement, widget collapse thresholds    |
+| `src/config/post-list.ts`    | page size                                         |
+| `src/config/analytics.ts`    | Vercel Analytics / Speed Insights on-off switches |
 
 ### Language
 
@@ -88,13 +95,31 @@ payload, RSS/Atom, the sitemap, or `llms.txt`.
 `<html lang>`, all UI strings, and date formatting. There is no `/[lang]` route and no runtime
 switcher — changing the language means changing the config and rebuilding.
 
+## Layout
+
+Every page renders through `PageShell`, which gives a three-column reading frame:
+
+| Column            | Contents                                                       | Visible from  |
+| ----------------- | -------------------------------------------------------------- | ------------- |
+| Left (primary)    | profile, announcement, categories, tags, series                | `lg` (1024px) |
+| Centre            | the page content, with the footer inside this column           | always        |
+| Right (secondary) | site stats, post calendar, table of contents (post pages only) | `xl` (1280px) |
+
+Both sidebars persist across pages because each page renders the shell rather than opting in
+individually. Below `xl` the secondary column is dropped rather than squeezed; below `lg` the
+primary column goes too. The footer sits inside the centre column, so it aligns to the reading
+measure instead of spanning the page.
+
+Set `arrangement: "single"` in `src/config/sidebar.ts` to drop the right-hand column entirely.
+
 ## Design
 
 Two daisyUI themes, `paper` (light) and `ink` (dark), tuned for reading CJK text: a warm paper
 light background, a soft ink dark background, and a serif CJK body face (LXGW WenKai) with Inter
 for Latin. Line length is capped at 42em, roughly 42 CJK characters per line.
 
-There is no theme picker beyond light/dark, and no Material Color tokens.
+There is no theme picker beyond light/dark, and no Material Color tokens. Posts carry no license
+block and the footer carries no license line.
 
 ## Checks
 

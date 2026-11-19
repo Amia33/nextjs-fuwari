@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { getTagList } from "@/src/content/posts";
+import { PageShell } from "@/src/components/organisms/PageShell";
 import { t } from "@/src/i18n";
 
 export const metadata = { title: t("tags.title") };
@@ -9,7 +10,7 @@ export default function TagsPage() {
   const tags = getTagList();
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-10">
+    <PageShell page="tags">
       <header className="mb-8">
         <h1 className="text-2xl font-semibold tracking-tight">
           {t("tags.title")}
@@ -31,6 +32,6 @@ export default function TagsPage() {
           </li>
         ))}
       </ul>
-    </div>
+    </PageShell>
   );
 }

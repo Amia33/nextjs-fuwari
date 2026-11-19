@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { getCategoryList } from "@/src/content/posts";
+import { PageShell } from "@/src/components/organisms/PageShell";
 import { t } from "@/src/i18n";
 
 export const metadata = { title: t("categories.title") };
@@ -9,7 +10,7 @@ export default function CategoriesPage() {
   const categories = getCategoryList().filter((item) => item.name);
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-10">
+    <PageShell page="categories">
       <header className="mb-8">
         <h1 className="text-2xl font-semibold tracking-tight">
           {t("categories.title")}
@@ -33,6 +34,6 @@ export default function CategoriesPage() {
           </li>
         ))}
       </ul>
-    </div>
+    </PageShell>
   );
 }

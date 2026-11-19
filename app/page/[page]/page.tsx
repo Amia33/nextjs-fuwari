@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 
 import { Pagination } from "@/src/components/molecules/Pagination";
+import { PageShell } from "@/src/components/organisms/PageShell";
 import { PostList } from "@/src/components/organisms/PostList";
-import { Sidebar } from "@/src/components/organisms/Sidebar";
 import { getPaginatedPosts } from "@/src/content/posts";
 import { postListConfig } from "@/src/config/post-list";
 
@@ -30,14 +30,9 @@ export default async function PageNumber({ params }: Props) {
   if (posts.length === 0) notFound();
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4">
-      <div className="flex gap-8 py-10">
-        <main className="min-w-0 flex-1">
-          <PostList posts={posts} />
-          <Pagination page={page} totalPages={totalPages} />
-        </main>
-        <Sidebar />
-      </div>
-    </div>
+    <PageShell page="home" wide>
+      <PostList posts={posts} />
+      <Pagination page={page} totalPages={totalPages} />
+    </PageShell>
   );
 }

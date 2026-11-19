@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { getSeriesList } from "@/src/content/posts";
+import { PageShell } from "@/src/components/organisms/PageShell";
 import { t } from "@/src/i18n";
 
 export const metadata = { title: t("series.title") };
@@ -9,7 +10,7 @@ export default function SeriesPage() {
   const series = getSeriesList();
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-10">
+    <PageShell page="series">
       <header className="mb-8">
         <h1 className="text-2xl font-semibold tracking-tight">
           {t("series.title")}
@@ -47,6 +48,6 @@ export default function SeriesPage() {
           </details>
         ))}
       </div>
-    </div>
+    </PageShell>
   );
 }

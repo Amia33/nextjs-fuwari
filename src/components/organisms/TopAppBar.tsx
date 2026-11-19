@@ -1,13 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useState,
+  useSyncExternalStore,
+} from "react";
 
 import { navConfig } from "@/src/config/nav";
 import { t } from "@/src/i18n";
 
 import { Logo } from "./Logo";
+import { NavLinks, NavLinksFallback } from "./NavLinks";
 import { ThemeToggle } from "./ThemeToggle";
 
 let scrolled = false;
@@ -46,7 +52,6 @@ function useScrolled(): boolean {
 }
 
 export function TopAppBar() {
-  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const isScrolled = useScrolled();
   const close = useCallback(() => setOpen(false), []);
@@ -71,28 +76,9 @@ export function TopAppBar() {
       <nav className="mx-auto flex h-16 w-full max-w-6xl items-center gap-4 px-4">
         <Logo />
 
-        <ul className="ml-auto hidden items-center gap-1 md:flex">
-          {navConfig.map((item) => {
-            const active =
-              item.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(item.href);
-            return (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  transitionTypes={["nav-forward"]}
-                  className={`btn btn-ghost btn-sm ${
-                    active ? "text-primary" : "font-normal"
-                  }`}
-                  aria-current={active ? "page" : undefined}
-                >
-                  {t(item.key)}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+        <Suspense fallback={<NavLinksFallback />}>
+          <NavLinks />
+        </Suspense>
 
         <div className="ml-auto flex items-center gap-1 md:ml-0">
           <ThemeToggle />

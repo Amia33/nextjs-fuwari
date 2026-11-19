@@ -27,7 +27,6 @@ export const ja_JP: Dictionary = {
   "post.protected": "保護中",
   "post.empty": "まだ記事がありません。",
   "post.notFound": "記事が見つかりません。",
-  "post.license": "ライセンス",
 
   "list.page": "{page} ページ目",
   "list.prevPage": "前のページ",
@@ -76,16 +75,29 @@ export const ja_JP: Dictionary = {
   "gate.wrong": "パスワードが違います。",
   "gate.throttled": "試行回数が多すぎます。しばらくしてからお試しください。",
 
-  "feed.rss": "RSS",
-  "feed.atom": "Atom",
-  "feed.copy": "フィード URL をコピー",
-  "feed.copied": "コピーしました",
-  "feed.title": "購読",
-  "feed.description": "お好みのリーダーで購読できます。",
-  "feed.recent": "最近の記事",
+  "announcement.title": "お知らせ",
+  "announcement.close": "お知らせを閉じる",
+
+  "stats.title": "サイト統計",
+  "stats.posts": "記事",
+  "stats.moments": "つぶやき",
+  "stats.albums": "アルバム",
+  "stats.categories": "カテゴリー",
+  "stats.tags": "タグ",
+  "stats.series": "シリーズ",
+  "stats.words": "文字数",
+  "stats.updated": "最終更新",
+
+  "calendar.title": "カレンダー",
+  "calendar.prevMonth": "前の月",
+  "calendar.nextMonth": "次の月",
+  "calendar.today": "今日に戻る",
+  "calendar.noPosts": "この日の記事はありません",
+
+  "sidebar.primary": "サイドバー",
+  "sidebar.secondary": "補助サイドバー",
 
   "footer.poweredBy": "Next.js で構築",
-  "footer.license": "コンテンツは {license} で公開されています",
 
   "notFound.title": "ページが見つかりません",
   "notFound.description": "お探しのページはありません。",

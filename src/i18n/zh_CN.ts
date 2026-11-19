@@ -27,7 +27,6 @@ export const zh_CN: Dictionary = {
   "post.protected": "已加密",
   "post.empty": "还没有文章。",
   "post.notFound": "文章不存在。",
-  "post.license": "许可协议",
 
   "list.page": "第 {page} 页",
   "list.prevPage": "上一页",
@@ -76,16 +75,29 @@ export const zh_CN: Dictionary = {
   "gate.wrong": "密码不正确。",
   "gate.throttled": "尝试次数过多，请稍后再试。",
 
-  "feed.rss": "RSS",
-  "feed.atom": "Atom",
-  "feed.copy": "复制订阅地址",
-  "feed.copied": "已复制",
-  "feed.title": "订阅",
-  "feed.description": "用你喜欢的方式订阅本站。",
-  "feed.recent": "最近的文章",
+  "announcement.title": "公告",
+  "announcement.close": "关闭公告",
+
+  "stats.title": "站点统计",
+  "stats.posts": "文章",
+  "stats.moments": "瞬间",
+  "stats.albums": "相册",
+  "stats.categories": "分类",
+  "stats.tags": "标签",
+  "stats.series": "系列",
+  "stats.words": "字数",
+  "stats.updated": "最近更新",
+
+  "calendar.title": "日历",
+  "calendar.prevMonth": "上个月",
+  "calendar.nextMonth": "下个月",
+  "calendar.today": "回到今天",
+  "calendar.noPosts": "这一天没有文章",
+
+  "sidebar.primary": "侧边栏",
+  "sidebar.secondary": "辅助侧边栏",
 
   "footer.poweredBy": "由 Next.js 构建",
-  "footer.license": "内容基于 {license} 许可协议发布",
 
   "notFound.title": "页面不存在",
   "notFound.description": "你要找的页面不在这里。",

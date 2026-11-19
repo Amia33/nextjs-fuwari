@@ -25,7 +25,6 @@ export const en = {
   "post.protected": "Protected",
   "post.empty": "No posts yet.",
   "post.notFound": "Post not found.",
-  "post.license": "License",
 
   "list.page": "Page {page}",
   "list.prevPage": "Previous page",
@@ -74,16 +73,29 @@ export const en = {
   "gate.wrong": "Incorrect password.",
   "gate.throttled": "Too many attempts. Try again later.",
 
-  "feed.rss": "RSS",
-  "feed.atom": "Atom",
-  "feed.copy": "Copy feed URL",
-  "feed.copied": "Copied",
-  "feed.title": "Subscribe",
-  "feed.description": "Follow this site with your reader of choice.",
-  "feed.recent": "Recent posts",
+  "announcement.title": "Announcement",
+  "announcement.close": "Dismiss announcement",
+
+  "stats.title": "Site stats",
+  "stats.posts": "Posts",
+  "stats.moments": "Moments",
+  "stats.albums": "Albums",
+  "stats.categories": "Categories",
+  "stats.tags": "Tags",
+  "stats.series": "Series",
+  "stats.words": "Words",
+  "stats.updated": "Updated",
+
+  "calendar.title": "Calendar",
+  "calendar.prevMonth": "Previous month",
+  "calendar.nextMonth": "Next month",
+  "calendar.today": "Back to today",
+  "calendar.noPosts": "No posts this day",
+
+  "sidebar.primary": "Sidebar",
+  "sidebar.secondary": "Supplementary sidebar",
 
   "footer.poweredBy": "Built with Next.js",
-  "footer.license": "Content licensed under {license}",
 
   "notFound.title": "Page not found",
   "notFound.description": "The page you were looking for does not exist.",

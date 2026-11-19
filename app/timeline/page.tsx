@@ -1,11 +1,12 @@
 import { timeline } from "@/src/data/timeline";
+import { PageShell } from "@/src/components/organisms/PageShell";
 import { t } from "@/src/i18n";
 
 export const metadata = { title: t("timeline.title") };
 
 export default function TimelinePage() {
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-10">
+    <PageShell page="timeline">
       <header className="mb-8">
         <h1 className="text-2xl font-semibold tracking-tight">
           {t("timeline.title")}
@@ -30,6 +31,6 @@ export default function TimelinePage() {
           </li>
         ))}
       </ol>
-    </div>
+    </PageShell>
   );
 }
