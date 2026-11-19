@@ -1,0 +1,43 @@
+import { notFound } from "next/navigation";
+
+import { Pagination } from "@/src/components/molecules/Pagination";
+import { PostList } from "@/src/components/organisms/PostList";
+import { Sidebar } from "@/src/components/organisms/Sidebar";
+import { getPaginatedPosts } from "@/src/content/posts";
+import { postListConfig } from "@/src/config/post-list";
+
+type Props = PageProps<"/page/[page]">;
+
+export async function generateStaticParams() {
+  const { totalPages } = getPaginatedPosts(1, postListConfig.pageSize);
+  // Cache Components requires a non-empty result. With a single page of posts
+  // there is no /page/N route to build, so emit the first real one.
+  if (totalPages <= 1) return [{ page: "2" }];
+  return Array.from({ length: totalPages - 1 }, (_, index) => ({
+    page: String(index + 2),
+  }));
+}
+
+export default async function PageNumber({ params }: Props) {
+  const { page: rawPage } = await params;
+  const pageNumber = Number(rawPage);
+  if (!Number.isInteger(pageNumber) || pageNumber < 2) notFound();
+
+  const { posts, page, totalPages } = getPaginatedPosts(
+    pageNumber,
+    postListConfig.pageSize,
+  );
+  if (posts.length === 0) notFound();
+
+  return (
+    <div className="mx-auto w-full max-w-6xl px-4">
+      <div className="flex gap-8 py-10">
+        <main className="min-w-0 flex-1">
+          <PostList posts={posts} />
+          <Pagination page={page} totalPages={totalPages} />
+        </main>
+        <Sidebar />
+      </div>
+    </div>
+  );
+}
