@@ -13,23 +13,25 @@ import { GradientFade } from "./GradientFade";
  * shows the current page's heading. Both animate the waves along the bottom
  * edge, matching the upstream Shirone banner. The waves are pure CSS, so they
  * are server-rendered and already moving on first paint.
+ *
+ * `siteTitleAs` lets a non-home page reuse the site banner while keeping the
+ * document's `h1` for its own heading — the post page does this, so the article
+ * title stays the single `h1` and the site name is decorative.
  */
 export function Banner({
   variant = "home",
   title,
   description,
-  image,
-  imageTransitionName,
+  siteTitleAs = "h1",
 }: {
   variant?: "home" | "page";
   title?: string;
   description?: string;
-  /** Per-page wallpaper; falls back to the site banner. */
-  image?: string;
-  /** View-transition name so a post cover can morph into the banner. */
-  imageTransitionName?: string;
+  /** Heading element for the site title in the `home` variant. */
+  siteTitleAs?: "h1" | "p";
 }) {
   const home = variant === "home";
+  const SiteTitle = siteTitleAs === "h1" ? "h1" : "p";
 
   return (
     <div
@@ -41,18 +43,13 @@ export function Banner({
           painted above the body background rather than behind it. */}
       <div className="absolute inset-0 isolate">
         <Image
-          src={image ?? siteConfig.banner.src}
+          src={siteConfig.banner.src}
           alt=""
           fill
           priority={home}
           sizes="100vw"
           className="object-cover"
-          style={{
-            objectPosition: siteConfig.banner.position,
-            ...(imageTransitionName
-              ? { viewTransitionName: imageTransitionName }
-              : {}),
-          }}
+          style={{ objectPosition: siteConfig.banner.position }}
         />
         <div
           aria-hidden="true"
@@ -66,9 +63,9 @@ export function Banner({
       <div className="relative flex h-full flex-col items-center justify-center px-6 text-center text-white">
         {home ? (
           <>
-            <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">
+            <SiteTitle className="text-3xl font-semibold tracking-tight sm:text-5xl">
               {siteConfig.title}
-            </h1>
+            </SiteTitle>
             <p className="mt-4 text-base opacity-90 sm:text-lg">
               {siteConfig.subtitle}
             </p>

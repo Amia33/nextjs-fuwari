@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -66,14 +67,20 @@ export default async function PostPage({ params }: Props) {
           </Suspense>
         ) : null
       }
-      bannerTitle={post.title}
-      bannerDescription={post.description || undefined}
-      bannerImage={post.image}
-      bannerImageTransitionName={`cover-${post._meta.path}`}
+      bannerVariant="home"
+      bannerSiteTitleAs="p"
     >
       <article className="pb-4">
         <header className="mb-8">
-          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm opacity-70">
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+            {post.title}
+          </h1>
+          {post.description ? (
+            <p className="mt-3 max-w-2xl text-sm opacity-70">
+              {post.description}
+            </p>
+          ) : null}
+          <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm opacity-70">
             <span>{t("post.published")}</span>
             <time dateTime={formatDateIso(post.published)}>
               {formatDate(post.published)}
@@ -116,6 +123,19 @@ export default async function PostPage({ params }: Props) {
             </ul>
           ) : null}
         </header>
+
+        {post.image ? (
+          <div className="relative mb-8 aspect-[16/9] w-full overflow-hidden rounded-box bg-base-200">
+            <Image
+              src={post.image}
+              alt=""
+              fill
+              sizes="(max-width: 1024px) 100vw, 56rem"
+              className="object-cover"
+              style={{ viewTransitionName: `cover-${post._meta.path}` }}
+            />
+          </div>
+        ) : null}
 
         <Suspense
           fallback={

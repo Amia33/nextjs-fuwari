@@ -20,6 +20,8 @@ import { sidebarConfig } from "@/src/config/sidebar";
  * The banner is rendered here too, so every page gets the wallpaper and
  * animated waves without each route having to remember. Non-home pages use the
  * shorter banner carrying their own title, matching upstream behaviour.
+ * `bannerVariant` decouples that choice from `home` for pages that want the
+ * site banner without the home layout's stats widget.
  *
  * The footer lives *inside* the content column so it aligns to the reading
  * measure rather than spanning the full page width.
@@ -31,10 +33,10 @@ export function PageShell({
   wide = false,
   home = false,
   stats,
+  bannerVariant,
   bannerTitle,
   bannerDescription,
-  bannerImage,
-  bannerImageTransitionName,
+  bannerSiteTitleAs,
 }: {
   children: ReactNode;
   /** Current page identifier, used for per-page widget visibility. */
@@ -47,21 +49,22 @@ export function PageShell({
   home?: boolean;
   /** Site-stats widget; defaults to `home`, since it is an index fixture. */
   stats?: boolean;
+  /** Banner shape, when it should differ from the `home` default. */
+  bannerVariant?: "home" | "page";
   bannerTitle?: string;
   bannerDescription?: string;
-  bannerImage?: string;
-  bannerImageTransitionName?: string;
+  /** Heading element for the banner's site title; `p` when the page has its own `h1`. */
+  bannerSiteTitleAs?: "h1" | "p";
 }) {
   const dual = sidebarConfig.arrangement === "dual";
 
   return (
     <>
       <Banner
-        variant={home ? "home" : "page"}
+        variant={bannerVariant ?? (home ? "home" : "page")}
         title={bannerTitle}
         description={bannerDescription}
-        image={bannerImage}
-        imageTransitionName={bannerImageTransitionName}
+        siteTitleAs={bannerSiteTitleAs}
       />
 
       <div className="mx-auto w-full max-w-[96rem] px-4">
