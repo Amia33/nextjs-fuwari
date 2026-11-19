@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 
 import { currentHtmlLang, t } from "@/src/i18n";
 import type { CalendarPost } from "@/src/content/calendar";
@@ -24,6 +24,28 @@ const MONTH_LABEL = new Intl.DateTimeFormat(currentHtmlLang, {
   timeZone: "UTC",
 });
 
+const pad = (value: number) => String(value).padStart(2, "0");
+
+/** Local calendar day as `YYYY-MM-DD`, in the visitor's own timezone. */
+function localToday(): string {
+  const now = new Date();
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+}
+
+const noopSubscribe = () => () => {};
+
+/**
+ * The visitor's current day, resolved after hydration.
+ *
+ * The server snapshot is `null`, so prerendered markup stays deterministic;
+ * React re-renders with the real value immediately after hydration without a
+ * mismatch. Reading it inside an effect and calling `setState` would do the
+ * same thing less safely.
+ */
+function useToday(): string | null {
+  return useSyncExternalStore(noopSubscribe, localToday, () => null);
+}
+
 type Cell = { key: string; day: number; dateKey: string } | null;
 
 function monthCells(month: string): Cell[] {
@@ -34,7 +56,7 @@ function monthCells(month: string): Cell[] {
 
   const cells: Cell[] = Array.from({ length: firstWeekday }, () => null);
   for (let day = 1; day <= daysInMonth; day += 1) {
-    const dateKey = `${month}-${String(day).padStart(2, "0")}`;
+    const dateKey = `${month}-${pad(day)}`;
     cells.push({ key: dateKey, day, dateKey });
   }
   return cells;
@@ -43,7 +65,7 @@ function monthCells(month: string): Cell[] {
 function shiftMonth(month: string, delta: number): string {
   const [year, monthIndex] = month.split("-").map(Number);
   const date = new Date(Date.UTC(year, monthIndex - 1 + delta, 1));
-  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
+  return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}`;
 }
 
 export function CalendarWidget({
@@ -53,18 +75,28 @@ export function CalendarWidget({
   postsByDate: Record<string, CalendarPost[]>;
   initialMonth?: string;
 }) {
-  // The initial month comes from build data, so the prerendered calendar is
-  // deterministic. "Today" is only consulted on demand, inside the button
-  // handler, which keeps the server and client markup identical.
-  const [month, setMonth] = useState(initialMonth ?? "");
+  // `null` means "follow the visitor's current month", as upstream does.
+  // Prerendering has no "today", so it falls back to the newest month that
+  // actually has posts.
+  const today = useToday();
+  const [month, setMonth] = useState<string | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
-  const cells = useMemo(() => (month ? monthCells(month) : []), [month]);
 
-  if (!month) return null;
+  const displayMonth = month ?? today?.slice(0, 7) ?? initialMonth;
+  const cells = useMemo(
+    () => (displayMonth ? monthCells(displayMonth) : []),
+    [displayMonth],
+  );
+
+  if (!displayMonth) return null;
 
   const monthLabel = MONTH_LABEL.format(
     new Date(
-      Date.UTC(Number(month.slice(0, 4)), Number(month.slice(5, 7)) - 1, 1),
+      Date.UTC(
+        Number(displayMonth.slice(0, 4)),
+        Number(displayMonth.slice(5, 7)) - 1,
+        1,
+      ),
     ),
   );
   const selectedPosts = selected ? (postsByDate[selected] ?? []) : [];
@@ -78,7 +110,7 @@ export function CalendarWidget({
           aria-label={t("calendar.prevMonth")}
           onClick={() => {
             setSelected(null);
-            setMonth((current) => shiftMonth(current, -1));
+            setMonth(shiftMonth(displayMonth, -1));
           }}
         >
           <span aria-hidden="true">‹</span>
@@ -90,7 +122,7 @@ export function CalendarWidget({
           aria-label={t("calendar.nextMonth")}
           onClick={() => {
             setSelected(null);
-            setMonth((current) => shiftMonth(current, 1));
+            setMonth(shiftMonth(displayMonth, 1));
           }}
         >
           <span aria-hidden="true">›</span>
@@ -108,6 +140,7 @@ export function CalendarWidget({
           if (!cell) return <span key={`empty-${index}`} />;
 
           const hasPosts = Boolean(postsByDate[cell.dateKey]?.length);
+          const isToday = today === cell.dateKey;
           const isSelected = selected === cell.dateKey;
 
           return (
@@ -115,13 +148,15 @@ export function CalendarWidget({
               key={cell.key}
               type="button"
               data-has-posts={hasPosts || undefined}
+              data-today={isToday || undefined}
               data-selected={isSelected || undefined}
+              aria-current={isToday ? "date" : undefined}
               onClick={() =>
                 setSelected((current) =>
                   current === cell.dateKey ? null : cell.dateKey,
                 )
               }
-              className="relative aspect-square rounded text-xs tabular-nums transition-colors hover:bg-base-200 data-[selected]:bg-primary data-[selected]:text-primary-content"
+              className="relative aspect-square rounded text-xs tabular-nums transition-colors hover:bg-base-200 data-[today]:bg-primary/15 data-[today]:font-semibold data-[today]:text-primary data-[selected]:bg-primary data-[selected]:text-primary-content"
             >
               {cell.day}
               {hasPosts ? (
@@ -159,11 +194,10 @@ export function CalendarWidget({
           type="button"
           className="btn btn-ghost btn-xs mt-1 w-full"
           onClick={() => {
-            const now = new Date();
+            // Resetting the override makes the grid follow the visitor's
+            // current month again, with today highlighted.
+            setMonth(null);
             setSelected(null);
-            setMonth(
-              `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`,
-            );
           }}
         >
           {t("calendar.today")}
