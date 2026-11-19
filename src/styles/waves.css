@@ -1,0 +1,132 @@
+/* ==========================================================================
+   Banner waves
+   ==========================================================================
+
+   Ported from the upstream Shirone `BannerWaves` component. Four `<use>` layers
+   of two mirrored paths, animated only via CSS transform — no canvas and no
+   client JavaScript, so the waves ship in the first payload and are already
+   moving on first paint.
+
+   `currentColor` picks up `--color-base-100`, so the waves follow the theme for
+   free with no observer resyncing a fill colour. */
+
+.banner-waves {
+  position: absolute;
+  z-index: 3;
+  inset: auto 0 0;
+  height: clamp(2.5rem, 8vh, 4.5rem);
+  overflow: hidden;
+  color: var(--color-base-100);
+  pointer-events: none;
+}
+
+.banner-waves svg {
+  display: block;
+  width: 112%;
+  height: 100%;
+  margin-inline: -6%;
+  overflow: visible;
+}
+
+.banner-waves-layer {
+  /* One period in viewBox units: 240 (viewBox width) * 53.3333% = 128.
+     Shifting by exactly one period makes the loop seamless. */
+  --banner-wave-period: -53.3333%;
+  --banner-wave-scale-y: 1;
+
+  fill: currentcolor;
+  transform-box: view-box;
+  transform-origin: 50% 100%;
+  transform: translate3d(var(--banner-wave-start), var(--banner-wave-y), 0)
+    scaleY(var(--banner-wave-scale-y));
+  animation-name: banner-wave-flow;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.banner-waves-layer-haze {
+  --banner-wave-start: var(--banner-wave-period);
+  --banner-wave-end: 0%;
+  --banner-wave-y: 0;
+
+  opacity: 0.25;
+  animation-duration: 7s;
+}
+
+.banner-waves-layer-far {
+  --banner-wave-start: 0%;
+  --banner-wave-end: var(--banner-wave-period);
+  --banner-wave-y: 4px;
+
+  opacity: 0.48;
+  animation-duration: 10s;
+}
+
+.banner-waves-layer-middle {
+  --banner-wave-start: var(--banner-wave-period);
+  --banner-wave-end: 0%;
+  --banner-wave-y: 8px;
+
+  opacity: 0.72;
+  animation-duration: 13s;
+}
+
+.banner-waves-layer-near {
+  --banner-wave-start: 0%;
+  --banner-wave-end: var(--banner-wave-period);
+  --banner-wave-y: 12px;
+
+  opacity: 0.9;
+  animation-duration: 18s;
+}
+
+@keyframes banner-wave-flow {
+  to {
+    transform: translate3d(var(--banner-wave-end), var(--banner-wave-y), 0)
+      scaleY(var(--banner-wave-scale-y));
+  }
+}
+
+@media (width <= 479.98px) {
+  .banner-waves-layer {
+    --banner-wave-scale-y: 0.72;
+  }
+
+  .banner-waves-layer-haze {
+    opacity: 0.18;
+  }
+
+  .banner-waves-layer-far {
+    opacity: 0.36;
+  }
+}
+
+@media (width >= 480px) and (width <= 767.98px) {
+  .banner-waves {
+    height: clamp(3rem, 8vh, 4.5rem);
+  }
+
+  .banner-waves-layer {
+    --banner-wave-scale-y: 0.72;
+  }
+
+  .banner-waves-layer-haze {
+    opacity: 0.18;
+  }
+
+  .banner-waves-layer-far {
+    opacity: 0.36;
+  }
+}
+
+@media (width >= 768px) {
+  .banner-waves {
+    height: clamp(4.5rem, 15vh, 9.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .banner-waves-layer {
+    animation: none;
+  }
+}
