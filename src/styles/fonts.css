@@ -1,0 +1,26 @@
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/inter/wght-italic.css";
+@import "@fontsource-variable/jetbrains-mono";
+@import "lxgw-wenkai-webfont/lxgwwenkai-regular.css";
+@import "lxgw-wenkai-webfont/lxgwwenkai-bold.css";
+
+@theme inline {
+  --font-sans:
+    "Inter Variable", "LXGW WenKai", "Noto Sans JP", "Hiragino Sans",
+    "Microsoft YaHei", system-ui, sans-serif;
+  --font-serif:
+    "LXGW WenKai", "Noto Serif JP", "Hiragino Mincho ProN", "Songti SC", serif;
+  --font-mono:
+    "JetBrains Mono Variable", ui-monospace, "SFMono-Regular", menlo, monospace;
+}
+
+html {
+  font-family: var(--font-sans);
+  font-optical-sizing: auto;
+  text-rendering: optimizelegibility;
+  text-size-adjust: 100%;
+}
+
+.prose {
+  font-family: var(--font-serif);
+}

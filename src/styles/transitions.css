@@ -1,0 +1,65 @@
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-old(.nav-forward) {
+  --duration-exit: 150ms;
+
+  animation: var(--duration-exit) ease-in both fade-out;
+}
+
+::view-transition-new(.nav-forward) {
+  --duration-enter: 210ms;
+
+  animation: var(--duration-enter) ease-out both slide-from-right;
+}
+
+::view-transition-old(.nav-back) {
+  --duration-exit: 150ms;
+
+  animation: var(--duration-exit) ease-in both fade-out;
+}
+
+::view-transition-new(.nav-back) {
+  --duration-enter: 210ms;
+
+  animation: var(--duration-enter) ease-out both slide-from-left;
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slide-from-right {
+  from {
+    transform: translateX(1.5rem);
+    opacity: 0;
+  }
+}
+
+@keyframes slide-from-left {
+  from {
+    transform: translateX(-1.5rem);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}

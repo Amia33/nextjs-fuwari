@@ -1,0 +1,86 @@
+.prose {
+  max-width: 42em;
+  line-height: 1.75;
+  color: var(--color-base-content);
+}
+
+html[lang="zh-CN"] .prose,
+html[lang="ja-JP"] .prose {
+  line-height: 1.85;
+  letter-spacing: 0.01em;
+}
+
+.prose :is(h1, h2, h3, h4) {
+  text-wrap: balance;
+  scroll-margin-top: 6rem;
+}
+
+.prose p,
+.prose li {
+  text-wrap: pretty;
+}
+
+.prose a {
+  color: var(--color-primary);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: color-mix(
+    in oklch,
+    var(--color-primary) 40%,
+    transparent
+  );
+}
+
+.prose a:hover {
+  text-decoration-color: currentcolor;
+}
+
+.prose .heading-anchor {
+  color: inherit;
+  text-decoration: none;
+}
+
+.prose :not(pre) > code {
+  background: var(--color-base-200);
+  padding: 0.15em 0.35em;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  font-family: var(--font-mono);
+}
+
+.prose :not(pre) > code::before,
+.prose :not(pre) > code::after {
+  content: none;
+}
+
+.prose img {
+  border-radius: var(--radius-box);
+}
+
+[data-spoiler] {
+  background: var(--color-base-300);
+  color: transparent;
+  border-radius: 0.25rem;
+  padding: 0 0.15em;
+  cursor: pointer;
+  transition:
+    color 150ms ease,
+    background-color 150ms ease;
+}
+
+[data-spoiler]:hover,
+[data-spoiler]:focus-visible {
+  background: var(--color-base-200);
+  color: inherit;
+}
+
+.text-spacing-trim {
+  text-spacing-trim: trim-start;
+}
+
+@media (width <= 640px) {
+  .prose {
+    max-width: none;
+  }
+}
