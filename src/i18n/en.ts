@@ -26,7 +26,6 @@ export const en = {
   "post.empty": "No posts yet.",
   "post.notFound": "Post not found.",
 
-  "list.page": "Page {page}",
   "list.prevPage": "Previous page",
   "list.nextPage": "Next page",
 

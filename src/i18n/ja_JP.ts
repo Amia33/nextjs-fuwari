@@ -28,7 +28,6 @@ export const ja_JP: Dictionary = {
   "post.empty": "まだ記事がありません。",
   "post.notFound": "記事が見つかりません。",
 
-  "list.page": "{page} ページ目",
   "list.prevPage": "前のページ",
   "list.nextPage": "次のページ",
 

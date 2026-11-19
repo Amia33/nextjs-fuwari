@@ -28,7 +28,6 @@ export const zh_CN: Dictionary = {
   "post.empty": "还没有文章。",
   "post.notFound": "文章不存在。",
 
-  "list.page": "第 {page} 页",
   "list.prevPage": "上一页",
   "list.nextPage": "下一页",
 

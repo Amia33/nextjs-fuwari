@@ -5,7 +5,7 @@ import { PageShell } from "@/src/components/organisms/PageShell";
 import { PostList } from "@/src/components/organisms/PostList";
 import { getPaginatedPosts } from "@/src/content/posts";
 import { postListConfig } from "@/src/config/post-list";
-import { t } from "@/src/i18n";
+import { siteConfig } from "@/src/config/site";
 
 type Props = PageProps<"/page/[page]">;
 
@@ -44,7 +44,8 @@ export default async function PageNumber({ params }: Props) {
       page="home"
       wide
       stats
-      bannerTitle={t("list.page", { page: pageNumber })}
+      bannerTitle={siteConfig.title}
+      bannerDescription={siteConfig.subtitle}
     >
       <PostList posts={posts} />
       <Pagination page={page} totalPages={totalPages} />
