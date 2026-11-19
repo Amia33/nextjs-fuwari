@@ -67,20 +67,12 @@ export default async function PostPage({ params }: Props) {
           </Suspense>
         ) : null
       }
-      bannerVariant="home"
-      bannerSiteTitleAs="p"
+      bannerTitle={post.title}
+      bannerDescription={post.description || undefined}
     >
       <article className="pb-4">
         <header className="mb-8">
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            {post.title}
-          </h1>
-          {post.description ? (
-            <p className="mt-3 max-w-2xl text-sm opacity-70">
-              {post.description}
-            </p>
-          ) : null}
-          <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm opacity-70">
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm opacity-70">
             <span>{t("post.published")}</span>
             <time dateTime={formatDateIso(post.published)}>
               {formatDate(post.published)}
