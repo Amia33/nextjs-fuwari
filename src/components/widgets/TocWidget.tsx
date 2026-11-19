@@ -6,12 +6,21 @@ import type { Heading } from "@/src/content/headings";
 import { t } from "@/src/i18n";
 
 /**
+ * Where a heading becomes the active one, as a fraction of the viewport height.
+ *
+ * A heading switches on once its top crosses this line. 0.25 keeps the highlight
+ * in the top quarter of the screen, just below the 4rem sticky header, rather
+ * than switching while the heading is still a third of the way down.
+ */
+const ACTIVE_LINE_RATIO = 0.25;
+
+/**
  * Sidebar table of contents with a reading-position highlight.
  *
- * The active heading is whichever one has most recently crossed 35% of the
- * viewport height — the rule the upstream Shirone TOC uses. Scroll events are
- * coalesced through `requestAnimationFrame`; the handler only reads layout
- * (no interleaved writes), so it does not force repeated reflow.
+ * The active heading is whichever one has most recently crossed
+ * `ACTIVE_LINE_RATIO` of the viewport height. Scroll events are coalesced
+ * through `requestAnimationFrame`; the handler only reads layout (no
+ * interleaved writes), so it does not force repeated reflow.
  *
  * Heading elements are resolved lazily on every measurement rather than once in
  * the effect: the article body sits behind a `<Suspense>` boundary (the gate
@@ -35,7 +44,7 @@ export function TocWidget({ headings }: { headings: Heading[] }) {
 
       if (elements.length === 0) return;
 
-      const threshold = window.innerHeight * 0.35;
+      const threshold = window.innerHeight * ACTIVE_LINE_RATIO;
       const atBottom =
         window.scrollY + window.innerHeight >=
         document.documentElement.scrollHeight - 2;
