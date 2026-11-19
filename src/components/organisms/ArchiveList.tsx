@@ -1,9 +1,21 @@
 import Link from "next/link";
 
-import type { PublicPost } from "@/src/content/posts";
+/**
+ * The few fields the archive list renders. Deliberately narrower than
+ * `PublicPost`: the archive browser is a Client Component, and passing whole
+ * posts would serialize every compiled MDX body into the page payload.
+ */
+export type ArchivePost = {
+  path: string;
+  title: string;
+  published: Date;
+  category?: string;
+  /** Kept for the browser-side tag filter. */
+  tags: string[];
+};
 
-export function ArchiveList({ posts }: { posts: PublicPost[] }) {
-  const byYear = new Map<number, PublicPost[]>();
+export function ArchiveList({ posts }: { posts: ArchivePost[] }) {
+  const byYear = new Map<number, ArchivePost[]>();
   for (const post of posts) {
     const year = post.published.getUTCFullYear();
     const group = byYear.get(year) ?? [];
@@ -22,7 +34,7 @@ export function ArchiveList({ posts }: { posts: PublicPost[] }) {
           </h2>
           <ul className="space-y-3">
             {(byYear.get(year) ?? []).map((post) => (
-              <li key={post._meta.path} className="flex items-baseline gap-3">
+              <li key={post.path} className="flex items-baseline gap-3">
                 <time
                   dateTime={post.published.toISOString()}
                   className="w-14 shrink-0 text-xs tabular-nums opacity-50"
@@ -30,7 +42,7 @@ export function ArchiveList({ posts }: { posts: PublicPost[] }) {
                   {post.published.toISOString().slice(5, 10).replace("-", "/")}
                 </time>
                 <Link
-                  href={`/posts/${post._meta.path}`}
+                  href={`/posts/${post.path}`}
                   transitionTypes={["nav-forward"]}
                   className="min-w-0 flex-1 truncate text-sm hover:text-primary"
                 >

@@ -78,14 +78,6 @@ export function getCategoryList() {
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 }
 
-export function getPostsByTag(tag: string): PublicPost[] {
-  return getSortedPosts().filter((post) => post.tags.includes(tag));
-}
-
-export function getPostsByCategory(category: string): PublicPost[] {
-  return getSortedPosts().filter((post) => (post.category ?? "") === category);
-}
-
 export function getSeriesList() {
   const groups = new Map<string, PublicPost[]>();
   for (const post of getSortedPosts()) {
