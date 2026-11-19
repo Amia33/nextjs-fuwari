@@ -7,9 +7,10 @@ import { DateAgo, DateSpan } from "@/src/components/molecules/RelativeTime";
 import { PageShell } from "@/src/components/organisms/PageShell";
 import { ProtectedBody } from "@/src/components/organisms/ProtectedBody";
 import { PhotoSwipeProvider } from "@/src/components/organisms/PhotoSwipeProvider";
-import { TocWidget } from "@/src/components/widgets/TocWidget";
+import { PostToc } from "@/src/components/organisms/PostToc";
 import { getPostBySlug, getSortedPosts } from "@/src/content/posts";
 import { articleConfig } from "@/src/config/article";
+import { siteConfig } from "@/src/config/site";
 import { formatDate, formatDateIso, t } from "@/src/i18n";
 import { extractHeadings } from "@/src/content/headings";
 
@@ -44,7 +45,7 @@ export default async function PostPage({ params }: Props) {
   const post = getPostBySlug(slug.join("/"));
   if (!post) notFound();
 
-  const headings = extractHeadings(post.content);
+  const headings = extractHeadings(post.content, siteConfig.toc.maxDepth);
   const updatedAgeDays = post.updated
     ? Math.round(
         (post.updated.getTime() - post.published.getTime()) / 86_400_000,
@@ -58,7 +59,13 @@ export default async function PostPage({ params }: Props) {
   return (
     <PageShell
       page="post"
-      toc={<TocWidget headings={headings} />}
+      toc={
+        headings.length >= siteConfig.toc.minHeadings ? (
+          <Suspense fallback={null}>
+            <PostToc id={post._meta.path} headings={headings} />
+          </Suspense>
+        ) : null
+      }
       bannerTitle={post.title}
       bannerDescription={post.description || undefined}
       bannerImage={post.image}

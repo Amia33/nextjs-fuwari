@@ -77,8 +77,6 @@ export function TocWidget({ headings }: { headings: Heading[] }) {
     };
   }, [headings]);
 
-  if (headings.length < 2) return null;
-
   return (
     <div className="rounded-box border border-base-300 bg-base-100 p-4">
       <h2 className="mb-2 text-xs font-medium uppercase tracking-wider opacity-50">
