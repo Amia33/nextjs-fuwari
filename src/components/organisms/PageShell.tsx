@@ -30,6 +30,7 @@ export function PageShell({
   toc,
   wide = false,
   home = false,
+  stats,
   bannerTitle,
   bannerDescription,
   bannerImage,
@@ -44,6 +45,8 @@ export function PageShell({
   wide?: boolean;
   /** Home uses the full-viewport banner with the site title. */
   home?: boolean;
+  /** Site-stats widget; defaults to `home`, since it is an index fixture. */
+  stats?: boolean;
   bannerTitle?: string;
   bannerDescription?: string;
   bannerImage?: string;
@@ -79,7 +82,9 @@ export function PageShell({
             <Footer />
           </div>
 
-          {dual ? <SecondarySidebar toc={toc} showStats={home} /> : null}
+          {dual ? (
+            <SecondarySidebar toc={toc} showStats={stats ?? home} />
+          ) : null}
         </div>
       </div>
     </>
