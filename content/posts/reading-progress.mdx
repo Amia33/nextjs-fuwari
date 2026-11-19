@@ -1,0 +1,51 @@
+---
+title: 用 CSS 做阅读进度指示的几种方式
+description: 从最简单的到最准确的，各自适合什么场景。
+published: 2026-10-12
+updated: 2026-11-01
+tags: [CSS, 前端]
+category: 技术
+lang: zh_CN
+image: /images/cover-c.jpg
+---
+
+阅读进度条看起来是个小功能，但实现方式差别很大。这里记录三种，从最省事的到最准确的。
+
+## 一、滚动容器的 `scroll()` 时间线
+
+```css
+.progress {
+  animation-timeline: scroll(root block);
+  animation-name: grow;
+}
+
+@keyframes grow {
+  from {
+    scale: 0 1;
+  }
+  to {
+    scale: 1 1;
+  }
+}
+```
+
+零 JavaScript，但只有较新的浏览器支持。作为渐进增强非常合适。
+
+## 二、`IntersectionObserver` 哨兵
+
+在正文里的每个标题处放一个哨兵元素，观察哪个最后经过视口顶部。这种方式能给出「读到第几节」，比纯百分比更有意义。
+
+## 三、基于内容的百分比
+
+最准确的做法是拿「视口底部」和「正文实际高度」比较：
+
+$$
+\text{progress} = \frac{\text{scrollY} - \text{articleTop}}{\text{articleHeight} - \text{viewportHeight}}
+$$
+
+注意减掉视口高度，否则读到末尾时永远到不了 100%。
+
+<Alert type="warning" title="别用 scroll 事件做动画">
+  `scroll` 事件里直接改样式会在高频滚动时掉帧。要么用 `requestAnimationFrame`
+  节流，要么用上面的 CSS 方案。
+</Alert>

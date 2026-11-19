@@ -1,0 +1,28 @@
+---
+title: 为什么我把博客从 Astro 换到了 Next.js
+description: 一次迁移的记录：哪些变好了，哪些变麻烦了。
+published: 2026-07-25
+tags: [Astro, Next.js, 迁移]
+category: 技术
+lang: zh_CN
+image: /images/cover-a.jpg
+---
+
+原来的站点用 Astro 搭建，用了两年多。迁移的原因很简单：我需要一个更好的交互层。
+
+## 变好的地方
+
+React Server Components 让「静态内容 + 少量交互」这个组合变得清晰。侧边栏、目录、密码门这类需要读取请求信息的部分，可以直接在组件里做，不需要为它们单独写一套 API。
+
+## 变麻烦的地方
+
+- 内容模型需要自己写。Astro 的 `getCollection()` 很好用，Next.js 没有等价物。
+- 缓存语义变了。什么时候静态、什么时候动态，需要显式声明。
+
+<Alert type="important" title="给打算迁移的人">
+  迁移的主要成本不在框架 API，而在你原来依赖的那些「顺手」的集成。
+</Alert>
+
+## 值得吗
+
+对我来说值得。但这取决于你更需要什么。如果你的站点几乎是纯静态的，Astro 仍然更简单。
