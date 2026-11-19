@@ -31,9 +31,25 @@ image: /images/cover-c.jpg
 
 零 JavaScript，但只有较新的浏览器支持。作为渐进增强非常合适。
 
+### 降级处理
+
+不支持 `animation-timeline` 的浏览器只会看到一个静止不动的空进度条，所以要么用 `@supports` 隐藏它，要么保留一个 JS 版本兜底：
+
+```css
+@supports (animation-timeline: scroll()) {
+  .progress {
+    display: block;
+  }
+}
+```
+
 ## 二、`IntersectionObserver` 哨兵
 
 在正文里的每个标题处放一个哨兵元素，观察哪个最后经过视口顶部。这种方式能给出「读到第几节」，比纯百分比更有意义。
+
+### 为什么阈值要选 35%
+
+阈值决定了「当前小节」的判定点。取视口高度的 35% 意味着标题越过这条线就算读到了，比贴着顶部更贴近人眼的实际读数位置。
 
 ## 三、基于内容的百分比
 
