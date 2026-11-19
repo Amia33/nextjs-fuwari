@@ -56,13 +56,21 @@ export function MomentCard({
                   key={src}
                   className="relative aspect-[4/3] overflow-hidden rounded-box bg-base-200"
                 >
-                  <Image
-                    src={src}
-                    alt=""
-                    fill
-                    sizes="(max-width: 768px) 100vw, 24rem"
-                    className="object-cover"
-                  />
+                  <a
+                    href={src}
+                    className="block h-full w-full"
+                    data-pswp-src={src}
+                    data-pswp-width="1600"
+                    data-pswp-height="1200"
+                  >
+                    <Image
+                      src={src}
+                      alt=""
+                      fill
+                      sizes="(max-width: 768px) 100vw, 24rem"
+                      className="object-cover"
+                    />
+                  </a>
                 </li>
               ))}
             </ul>
