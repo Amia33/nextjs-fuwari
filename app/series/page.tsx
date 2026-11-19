@@ -28,15 +28,23 @@ export default function SeriesPage() {
               </span>
             </summary>
             <div className="collapse-content">
+              {/* Positional numbering, matching the series detail page: the
+                  posts are already ordered by `seriesOrder`. */}
               <ol className="space-y-2 text-sm">
-                {group.posts.map((post) => (
+                {group.posts.map((post, postIndex) => (
                   <li key={post._meta.path}>
                     <Link
                       href={`/posts/${post._meta.path}`}
                       transitionTypes={["nav-forward"]}
-                      className="hover:text-primary"
+                      className="flex items-baseline gap-3 hover:text-primary"
                     >
-                      {post.title}
+                      <span
+                        aria-hidden="true"
+                        className="text-xs font-medium tabular-nums opacity-40"
+                      >
+                        {String(postIndex + 1).padStart(2, "0")}
+                      </span>
+                      <span>{post.title}</span>
                     </Link>
                   </li>
                 ))}
