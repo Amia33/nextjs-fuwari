@@ -7,6 +7,19 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   prettier,
+  {
+    rules: {
+      // `_`-prefixed bindings are intentional destructure-and-discard.
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+        },
+      ],
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
@@ -15,6 +28,9 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     ".commandcode/**",
+    // Vendored reference implementations, not part of this project.
+    "upstream/**",
+    ".content-collections/**",
   ]),
 ]);
 

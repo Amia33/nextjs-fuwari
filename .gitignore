@@ -47,5 +47,9 @@ next-env.d.ts
 .turbo
 .swc
 
+# content-collections
+/.content-collections
+
 # custom
 .commandcode
+upstream
