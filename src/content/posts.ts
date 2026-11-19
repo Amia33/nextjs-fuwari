@@ -97,11 +97,28 @@ export function getSeriesList() {
   return [...groups.entries()]
     .map(([name, posts]) => ({
       name,
-      posts: [...posts].sort(
-        (a, b) => (a.seriesOrder ?? 0) - (b.seriesOrder ?? 0),
-      ),
+      posts: [...posts].sort(compareSeriesOrder),
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+/**
+ * Series membership is ordered by the author's `seriesOrder` alone.
+ *
+ * Posts without a number sort after numbered ones (they carry no stated
+ * position, so guessing from the date would be worse than saying nothing), and
+ * ties fall back to publish date then path so the order is stable across
+ * builds.
+ */
+function compareSeriesOrder(a: PublicPost, b: PublicPost): number {
+  const orderA = a.seriesOrder ?? Number.POSITIVE_INFINITY;
+  const orderB = b.seriesOrder ?? Number.POSITIVE_INFINITY;
+  if (orderA !== orderB) return orderA - orderB;
+
+  const delta = a.published.getTime() - b.published.getTime();
+  if (delta !== 0) return delta;
+
+  return a._meta.path.localeCompare(b._meta.path);
 }
 
 export function getPostsBySeries(name: string): PublicPost[] {
