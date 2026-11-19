@@ -9,6 +9,20 @@ import { t } from "@/src/i18n";
 
 type Props = PageProps<"/series/[slug]">;
 
+/**
+ * Every series page is prerendered in full: the document and its posts all come
+ * from build-time content, and the only URL data is `params`, which
+ * `generateStaticParams()` enumerates up front.
+ *
+ * Declaring `'navigation'` requires the complete route to be static output, so
+ * this page renders without a runtime pass like its siblings do. That matters
+ * because awaiting `params` outside `<Suspense>` is what makes a route bail on
+ * regeneration — previously any invalidation of this route turned it into a 500.
+ * The build now fails loudly if request-time data is ever introduced here,
+ * rather than degrading to an error page at request time.
+ */
+export const ensureStatic = "navigation";
+
 export async function generateStaticParams() {
   return getSeries().map((doc) => ({ slug: doc._meta.path }));
 }

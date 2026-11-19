@@ -23,6 +23,13 @@ async function clientKey(kind: GateKind, id: string): Promise<string> {
   return `${ip}:${kind}:${id}`;
 }
 
+/** The route that renders a given gated item, for targeted revalidation. */
+function unlockedPath(kind: GateKind, id: string): string {
+  if (kind === "moment") return "/moments";
+  if (kind === "album") return `/albums/${id}`;
+  return `/posts/${id}`;
+}
+
 export async function unlockContent(
   kind: GateKind,
   id: string,
@@ -53,6 +60,10 @@ export async function unlockContent(
 
   clearFailures(key);
   await unlockCookie(kind, id);
-  revalidatePath("/", "layout");
+  // Revalidate only the page that just unlocked. Invalidating the root layout
+  // would discard the static shell of every partial-prerender route, which then
+  // have to be regenerated on their next request — and that regeneration bails
+  // on `params` outside `<Suspense>`, turning unrelated routes into 500s.
+  revalidatePath(unlockedPath(kind, id));
   return { ok: true };
 }
