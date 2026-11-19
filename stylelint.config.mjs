@@ -2,6 +2,7 @@
 
 const stylelintConfig = {
   extends: ["stylelint-config-standard"],
+  ignoreFiles: ["public/**/*.css"],
   rules: {
     "import-notation": "string",
     "at-rule-no-unknown": [

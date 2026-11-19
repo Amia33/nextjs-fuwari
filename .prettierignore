@@ -4,3 +4,7 @@ coverage
 
 # custom
 pnpm-lock.yaml
+
+# vendored stylesheets
+public/katex.css
+public/photoswipe.css
