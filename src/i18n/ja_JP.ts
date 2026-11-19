@@ -47,6 +47,7 @@ export const ja_JP: Dictionary = {
   "tags.title": "タグ",
   "tags.description": "タグごとに記事を見る。",
   "tags.count": "{count} 件",
+  "tags.viewAll": "すべての {count} タグ",
 
   "series.title": "シリーズ",
   "series.description": "長めの文章をまとめて。",

@@ -8,9 +8,9 @@ import { SeriesWidget } from "../widgets/SeriesWidget";
 import { TagsWidget } from "../widgets/TagsWidget";
 
 export function PrimarySidebar({ page }: { page?: string }) {
+  // The announcement is a home-page widget, mirroring the upstream default.
   const showAnnouncement =
-    sidebarConfig.announcementPages.includes("home") &&
-    (page === "home" || page === undefined);
+    page === undefined || sidebarConfig.announcementPages.includes(page);
 
   return (
     <aside aria-label={t("sidebar.primary")} className="hidden lg:block">
@@ -20,7 +20,7 @@ export function PrimarySidebar({ page }: { page?: string }) {
         <CategoriesWidget
           collapseAfter={sidebarConfig.collapseAfter.categories}
         />
-        <TagsWidget collapseAfter={sidebarConfig.collapseAfter.tags} />
+        <TagsWidget limit={sidebarConfig.collapseAfter.tags} />
         <SeriesWidget collapseAfter={sidebarConfig.collapseAfter.series} />
       </div>
     </aside>

@@ -47,6 +47,7 @@ export const zh_CN: Dictionary = {
   "tags.title": "标签",
   "tags.description": "按标签浏览文章。",
   "tags.count": "{count} 篇",
+  "tags.viewAll": "查看全部 {count} 个标签",
 
   "series.title": "系列",
   "series.description": "较长的写作，成组收集。",

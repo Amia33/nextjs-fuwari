@@ -45,6 +45,7 @@ export const en = {
   "tags.title": "Tags",
   "tags.description": "Posts grouped by tag.",
   "tags.count": "{count} posts",
+  "tags.viewAll": "View all {count} tags",
 
   "series.title": "Series",
   "series.description": "Longer writings, collected.",
