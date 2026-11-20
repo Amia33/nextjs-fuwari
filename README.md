@@ -128,18 +128,100 @@ say) to move **public** content assets off this deployment; gated media always s
 
 ### Environment
 
-| Variable                   | Purpose                                                          |
-| -------------------------- | ---------------------------------------------------------------- |
-| `GATE_SECRET`              | signs unlock cookies; required in production                     |
-| `UPSTASH_REDIS_REST_URL`   | Upstash Redis for rate limiting (Vercel Marketplace integration) |
-| `UPSTASH_REDIS_REST_TOKEN` | same                                                             |
-| `NEXT_PUBLIC_MEDIA_ORIGIN` | optional external origin for public content assets               |
+| Variable                   | Purpose                                                       |
+| -------------------------- | ------------------------------------------------------------- |
+| `GATE_SECRET`              | signs unlock cookies; required in production                  |
+| `UPSTASH_REDIS_REST_URL`   | Upstash Redis REST endpoint (falls back to `KV_REST_API_URL`) |
+| `UPSTASH_REDIS_REST_TOKEN` | Upstash write token (falls back to `KV_REST_API_TOKEN`)       |
+| `NEXT_PUBLIC_MEDIA_ORIGIN` | optional external origin for public content assets            |
 
 Rate limiting is shared across instances in Redis, so five wrong passwords in fifteen minutes
-throttle the attempt no matter which lambda serves it. The counters live in Upstash; without those
-two variables the limiter **fails open** and logs, which is the intended behaviour for local
-development but must not be the case in production. Set both, then add a Vercel Firewall
-rate-limit rule keyed on the `unlockContent` Server Action Name as the outer guard.
+throttle the attempt no matter which lambda serves it. Without a working connection the limiter
+**fails open** and warns in the function logs — fine locally, unacceptable in production.
+
+### Deploying to Vercel
+
+Build settings:
+
+| Setting         | Value             |
+| --------------- | ----------------- |
+| Install Command | `pnpm install`    |
+| Build Command   | `pnpm build`      |
+| Output          | `.next` (default) |
+
+`pnpm build` is `pnpm sync-media && next build`. The sync step is **part of the script**, not a
+`prebuild` hook, so it runs no matter who invokes it. A dashboard build command that calls the
+binary directly — `pnpm next build` — bypasses package scripts entirely and leaves
+`public/assets/{posts,moments,albums}` out of the deployment, which makes every public content
+asset 404 and `next/image` answer 400.
+
+Checklist after the first deploy:
+
+1. Set `GATE_SECRET` (`openssl rand -base64 32`). Without it the build succeeds but every unlock
+   throws in production.
+2. Set the Upstash variables (below), then confirm the logs no longer print
+   `Rate limiting is NOT active`.
+3. Confirm a public asset loads: `/assets/avatar.png` is committed and should be `200`, and so
+   should `/assets/posts/<slug>/cover.jpg` once the sync step ran.
+4. Add the Firewall rules (below) and enable BotID Deep Analysis.
+
+#### Upstash rate limiting
+
+Add the Upstash integration from the Vercel Marketplace (Project → Storage → Upstash). It injects
+several variables; which ones to use:
+
+| Variable                                              | Use                                                        |
+| ----------------------------------------------------- | ---------------------------------------------------------- |
+| `KV_REST_API_URL` + `KV_REST_API_TOKEN`               | **Yes.** The pair the integration usually writes.          |
+| `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` | **Yes**, if present — takes precedence.                    |
+| `KV_URL`, `REDIS_URL`                                 | No — TCP URLs, the REST client cannot use them.            |
+| `KV_REST_API_READ_ONLY_TOKEN`                         | No — the limiter runs a Lua script and needs write access. |
+
+The code accepts either naming pair, so you do not need to rename anything. Only the URL and the
+**write** token are required; `GATE_SECRET` is separate.
+
+#### Vercel Firewall
+
+1. Project → **Firewall** → **Configure** → **+ New Rule**.
+2. **If** → **Server Action Name** → **Equals** → pick
+   `src/server/actions/unlock-content.ts#unlockContent` from the picker (typing it by hand is
+   error-prone — the `<path>#<export>` format must match exactly).
+3. **Then** → **Rate Limit** → fixed window, `60s`, limit `10`, key **IP**.
+4. Start on **Log**, confirm matches in Firewall → Overview, then switch to **Deny (429)**.
+5. Enable **BotID Deep Analysis** on the same page (Pro/Enterprise).
+
+Do not scope this rule by request path: Server Actions POST to whatever route renders the form, so
+the unlock action answers on `/posts/<slug>`, `/moments`, and `/albums/<id>` alike.
+
+#### BotID
+
+`instrumentation-client.ts` registers `initBotId()` for the paths the unlock action posts to, and
+`unlockContent` calls `checkBotId()` before touching Redis or Argon2. A detected bot gets the same
+`"throttled"` response as a rate-limited visitor, so the page does not teach an attacker which
+defence fired. BotID always reports `isBot: false` in local development.
+
+Testing note: BotID requires a real browser session. `curl` and direct route hits are classified
+as bots in production, so exercise protected routes through the UI.
+
+### Media on Cloudflare R2
+
+Public content assets can be served from a bucket instead of this deployment. Gated media never
+can — it must stay behind `/vault`.
+
+1. Create an R2 bucket and attach a custom domain (e.g. `media.example.com`). Proxying it through
+   your Cloudflare zone is what lets zone-level rules apply.
+2. **Rules → Transform Rules → Modify Response Header** adds `X-Content-Type-Options: nosniff`
+   (and `Content-Disposition: inline` if downloads default to attachment). Cache Rules cannot set
+   arbitrary headers; they only control caching behaviour.
+3. **Cache Rules** can set edge TTL / `immutable` for `/assets/**`, so you do not need per-object
+   metadata when uploading through the dashboard.
+4. Upload `public/assets/{posts,moments,albums}` with the same `<collection>/<slug>/<file>` paths,
+   set `NEXT_PUBLIC_MEDIA_ORIGIN=https://media.example.com`, and redeploy. `remotePatterns` in
+   `next.config.ts` already allows `media.446256.xyz`; change the hostname if yours differs.
+
+`Content-Type` still comes from the object's extension at upload time — no rule can infer it. If a
+rule appears to have no effect, check `cf-cache-status` with `curl -I`; a persistent `DYNAMIC` on
+an R2 custom domain usually means a Worker is needed in front.
 
 ### Security headers
 
