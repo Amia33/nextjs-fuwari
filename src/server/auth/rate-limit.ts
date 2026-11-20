@@ -3,6 +3,8 @@ import "server-only";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
+import { upstash } from "@/src/server/auth/upstash-env";
+
 /**
  * Rate limiting that survives across lambda instances.
  *
@@ -16,45 +18,36 @@ import { Redis } from "@upstash/redis";
  * - per item overall, which bounds total Argon2 work when an attacker rotates
  *   source addresses.
  *
- * If Redis is unreachable the limiter fails open and logs. The Vercel WAF rule
- * is the outer guard, and a Redis outage must not lock the author out of their
- * own blog.
+ * Fail-closed: a build without the Upstash variables is refused by
+ * `next.config.ts`, and if Redis is unreachable at request time the unlock is
+ * refused rather than allowed. Unbounded Argon2 work is the exposure being
+ * closed, so "cannot count" must never mean "do not count".
  */
 const WINDOW = "15 m";
 const MAX_ATTEMPTS = 5;
 const MAX_ATTEMPTS_GLOBAL = 50;
 
-/**
- * The Vercel Marketplace integration exposes these either as
- * `UPSTASH_REDIS_REST_*` or under the legacy Vercel KV names — the same pair
- * `Redis.fromEnv()` falls back to. Accept both.
- *
- * Only a write-capable token works: the read-only one cannot run the limiter's
- * Lua script, and `KV_URL`/`REDIS_URL` are TCP URLs the REST client cannot use.
- */
 function redis(): Redis | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL;
-  const token =
-    process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
+  const config = upstash();
+  if (!config) return null;
+  return new Redis({ url: config.url, token: config.token });
 }
 
 let client: Redis | null | undefined;
 
-const UNCONFIGURED =
-  "Rate limiting is NOT active: set UPSTASH_REDIS_REST_URL and " +
-  "UPSTASH_REDIS_REST_TOKEN (or KV_REST_API_URL / KV_REST_API_TOKEN) from " +
-  "the Upstash integration. Unlock attempts are currently unbounded.";
-
-let warned = false;
+let unconfiguredReported = false;
 
 function clientOrNull(): Redis | null {
   if (client === undefined) {
     client = redis();
-    if (!client && !warned) {
-      warned = true;
-      console.warn(`[rate-limit] ${UNCONFIGURED}`);
+    if (!client && !unconfiguredReported) {
+      unconfiguredReported = true;
+      console.error(
+        "[rate-limit] refusing every unlock: UPSTASH_REDIS_REST_URL and " +
+          "UPSTASH_REDIS_REST_TOKEN (or KV_REST_API_URL / KV_REST_API_TOKEN) " +
+          "are not set, so attempts cannot be counted. This deployment " +
+          "should not have built — check the environment variables.",
+      );
     }
   }
   return client;
@@ -88,20 +81,24 @@ function limiters(): { perClient: Ratelimit; perItem: Ratelimit } | null {
 }
 
 export type LimitResult =
-  { throttled: false } | { throttled: true; reason: "client" | "item" };
+  | { throttled: false }
+  | { throttled: true; reason: "client" | "item" | "unavailable" };
 
 /**
  * True once either tier is exhausted. Consumes one attempt from both tiers.
  *
  * `settle` receives the analytics promise Upstash keeps off the hot path; the
  * caller hands it to `waitUntil` so the function can respond first.
+ *
+ * Reports `unavailable` when the counter cannot be consulted, and the caller
+ * treats that as throttled: closing the unlock is the fail-closed choice.
  */
 export async function limit(
   clientKey: string,
   itemKey: string,
 ): Promise<LimitResult & { settle: Promise<unknown>[] }> {
   const active = limiters();
-  if (!active) return { throttled: false, settle: [] };
+  if (!active) return { throttled: true, reason: "unavailable", settle: [] };
 
   try {
     const [byClient, byItem] = await Promise.all([
@@ -114,8 +111,8 @@ export async function limit(
     if (!byItem.success) return { throttled: true, reason: "item", settle };
     return { throttled: false, settle };
   } catch (error) {
-    console.error("[rate-limit] Redis unavailable, failing open", error);
-    return { throttled: false, settle: [] };
+    console.error("[rate-limit] Redis unavailable, refusing the unlock", error);
+    return { throttled: true, reason: "unavailable", settle: [] };
   }
 }
 
@@ -124,6 +121,9 @@ export async function limit(
  * spent, so a successful unlock clears the per-client counter for that item.
  * The per-item counter is intentionally left alone — it counts total work, and
  * clearing it would let one valid password reset an attack in progress.
+ *
+ * Failure here only costs the visitor their remaining budget, so it is logged
+ * and not fatal: by this point the password has already been verified.
  */
 export async function clearClient(clientKey: string): Promise<void> {
   const active = limiters();

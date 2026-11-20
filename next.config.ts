@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 import { withContentCollections } from "@content-collections/next";
 
+import { TOKEN_NAMES, URL_NAMES, upstash } from "./src/server/auth/upstash-env";
+
 /**
  * Security headers, applied to every route.
  *
@@ -47,7 +49,31 @@ const securityHeaders = [
   },
 ];
 
-const nextConfig: NextConfig = {
+/**
+ * Rate limiting is fail-closed, so a production build without Upstash would
+ * deploy a site where every unlock is refused. Stop the build instead, while the
+ * message can still name the variables.
+ *
+ * Run here rather than in a script because `next build` loads `.env*` before
+ * evaluating this file, so it sees exactly what the runtime will. Every other
+ * command only warns: `pnpm dev` and `next start` must not need the check.
+ * The command is read the same way the content-collections plugin reads it.
+ */
+function requireUpstash() {
+  const [command] = process.argv.slice(2).filter((arg) => !arg.startsWith("-"));
+  if (command !== "build" || upstash()) return;
+
+  const message =
+    "Upstash Redis is required for rate limiting, but neither " +
+    `${URL_NAMES.join(" nor ")} and neither ${TOKEN_NAMES.join(" nor ")} ` +
+    "are set. Configure the Upstash integration, or the password gate would " +
+    "refuse every unlock in production.";
+  throw new Error(message);
+}
+
+requireUpstash();
+
+const baseConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   env: {
@@ -91,4 +117,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withContentCollections(nextConfig);
+export default withContentCollections(baseConfig);
