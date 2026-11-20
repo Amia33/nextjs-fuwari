@@ -2,6 +2,7 @@
 
 import { verify } from "@node-rs/argon2";
 import { ipAddress, waitUntil } from "@vercel/functions";
+import { checkBotId } from "botid/server";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -43,6 +44,29 @@ function unlockedPath(kind: GateKind, id: string): string {
   return `/posts/${id}`;
 }
 
+/**
+ * BotID only works on Vercel. Off-platform it either throws or warns about a
+ * missing client-side registration, so skip it entirely when the client half
+ * is disabled.
+ *
+ * `checkBotId` throws rather than returning a verdict when it cannot reach
+ * Vercel's bot-protection API — off-platform, or on a project without OIDC
+ * enabled. Treating that as "not a bot" keeps the unlock working everywhere;
+ * the rate limiter and the password itself are still in force. It also means an
+ * outage of the bot-protection API degrades protection instead of the site.
+ */
+async function isBot(): Promise<boolean> {
+  if (process.env.NEXT_PUBLIC_BOTID_ENABLED !== "1") return false;
+
+  try {
+    const { isBot: detected } = await checkBotId();
+    return detected;
+  } catch (error) {
+    console.warn("[botid] verification unavailable, allowing request", error);
+    return false;
+  }
+}
+
 export async function unlockContent(
   rawKind: GateKind,
   rawId: string,
@@ -54,6 +78,11 @@ export async function unlockContent(
   if (!parsed.success) return { ok: false, reason: "wrong" };
 
   const [kind, id, password] = parsed.data;
+
+  // BotID runs first: it is the cheapest check and it keeps automated traffic
+  // out of Argon2 and Redis entirely. It is an extra guard, not the gate, so a
+  // failure to verify must not block real visitors — see `isBot`.
+  if (await isBot()) return { ok: false, reason: "throttled" };
 
   const address = await clientAddress();
   const { throttled, settle } = await limit(

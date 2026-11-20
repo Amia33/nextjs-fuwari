@@ -50,6 +50,13 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
+  env: {
+    // BotID only works on Vercel: `initBotId()` loads a script that Vercel's
+    // network serves, and on any other host it 404s and takes the page's
+    // client runtime down with it. Inlined into the bundle at build time so
+    // the client can skip registering it elsewhere.
+    NEXT_PUBLIC_BOTID_ENABLED: process.env.VERCEL ? "1" : "0",
+  },
   turbopack: {
     rules: {
       "*.css": {
