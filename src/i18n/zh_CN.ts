@@ -74,6 +74,8 @@ export const zh_CN: Dictionary = {
   "gate.submitting": "验证中…",
   "gate.wrong": "密码不正确。",
   "gate.throttled": "尝试次数过多，请稍后再试。",
+  "gate.bot":
+    "浏览器被识别为自动化访问。请刷新页面后重试；若仍然如此，请更换浏览器或网络。",
 
   "announcement.title": "公告",
   "announcement.close": "关闭公告",

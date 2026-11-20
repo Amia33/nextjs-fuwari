@@ -72,6 +72,8 @@ export const en = {
   "gate.submitting": "Checking…",
   "gate.wrong": "Incorrect password.",
   "gate.throttled": "Too many attempts. Try again later.",
+  "gate.bot":
+    "Your browser was flagged as automated. Reload the page and try again; if it keeps happening, try a different browser or network.",
 
   "announcement.title": "Announcement",
   "announcement.close": "Dismiss announcement",

@@ -12,7 +12,7 @@ import { clearClient, limit } from "@/src/server/auth/rate-limit";
 import { unlockCookie, type GateKind } from "@/src/server/auth/session";
 
 export type UnlockResult =
-  { ok: true } | { ok: false; reason: "wrong" | "throttled" };
+  { ok: true } | { ok: false; reason: "wrong" | "throttled" | "bot" };
 
 const UnlockInput = z.tuple([
   z.enum(["post", "moment", "album"]),
@@ -82,16 +82,23 @@ export async function unlockContent(
   // BotID runs first: it is the cheapest check and it keeps automated traffic
   // out of Argon2 and Redis entirely. It is an extra guard, not the gate, so a
   // failure to verify must not block real visitors — see `isBot`.
-  if (await isBot()) return { ok: false, reason: "throttled" };
+  if (await isBot()) {
+    console.warn(`[gate] BotID flagged ${kind}/${id}: refused as "bot"`);
+    return { ok: false, reason: "bot" };
+  }
 
   const address = await clientAddress();
-  const { throttled, settle } = await limit(
-    `${address}:${kind}:${id}`,
-    `${kind}:${id}`,
-  );
-  waitUntil(Promise.all(settle));
+  const outcome = await limit(`${address}:${kind}:${id}`, `${kind}:${id}`);
+  waitUntil(Promise.all(outcome.settle));
 
-  if (throttled) return { ok: false, reason: "throttled" };
+  if (outcome.throttled) {
+    // `unavailable` means Redis could not be consulted. Fail-closed turns that
+    // into a throttle, and the log line is what tells the two apart later.
+    console.warn(
+      `[gate] rate limited ${kind}/${id} (${outcome.reason}): refused as "throttled"`,
+    );
+    return { ok: false, reason: "throttled" };
+  }
 
   const gate = getGate(kind, id);
   if (!gate) {

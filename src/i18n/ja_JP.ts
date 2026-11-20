@@ -74,6 +74,8 @@ export const ja_JP: Dictionary = {
   "gate.submitting": "確認中…",
   "gate.wrong": "パスワードが違います。",
   "gate.throttled": "試行回数が多すぎます。しばらくしてからお試しください。",
+  "gate.bot":
+    "自動化されたアクセスと判定されました。ページを再読み込みしてからお試しください。それでも続く場合は、別のブラウザやネットワークでお試しください。",
 
   "announcement.title": "お知らせ",
   "announcement.close": "お知らせを閉じる",

@@ -31,7 +31,11 @@ export function PasswordGate({
         return;
       }
       setError(
-        result.reason === "throttled" ? t("gate.throttled") : t("gate.wrong"),
+        result.reason === "bot"
+          ? t("gate.bot")
+          : result.reason === "throttled"
+            ? t("gate.throttled")
+            : t("gate.wrong"),
       );
     });
   }
