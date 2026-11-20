@@ -24,17 +24,39 @@ const WINDOW = "15 m";
 const MAX_ATTEMPTS = 5;
 const MAX_ATTEMPTS_GLOBAL = 50;
 
+/**
+ * The Vercel Marketplace integration exposes these either as
+ * `UPSTASH_REDIS_REST_*` or under the legacy Vercel KV names — the same pair
+ * `Redis.fromEnv()` falls back to. Accept both.
+ *
+ * Only a write-capable token works: the read-only one cannot run the limiter's
+ * Lua script, and `KV_URL`/`REDIS_URL` are TCP URLs the REST client cannot use.
+ */
 function redis(): Redis | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const url = process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL;
+  const token =
+    process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN;
   if (!url || !token) return null;
   return new Redis({ url, token });
 }
 
 let client: Redis | null | undefined;
 
+const UNCONFIGURED =
+  "Rate limiting is NOT active: set UPSTASH_REDIS_REST_URL and " +
+  "UPSTASH_REDIS_REST_TOKEN (or KV_REST_API_URL / KV_REST_API_TOKEN) from " +
+  "the Upstash integration. Unlock attempts are currently unbounded.";
+
+let warned = false;
+
 function clientOrNull(): Redis | null {
-  if (client === undefined) client = redis();
+  if (client === undefined) {
+    client = redis();
+    if (!client && !warned) {
+      warned = true;
+      console.warn(`[rate-limit] ${UNCONFIGURED}`);
+    }
+  }
   return client;
 }
 
