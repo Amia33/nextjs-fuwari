@@ -2,7 +2,9 @@ import { defineCollection, defineConfig } from "@content-collections/core";
 import { compileMDX } from "@content-collections/mdx";
 import { z } from "zod";
 
+import { assetUrl, type AssetCollection } from "./src/content/assets";
 import { rehypePlugins, remarkPlugins } from "./src/content/pipeline";
+import { remarkAssetPaths } from "./src/content/remark-asset-paths";
 import { excerptOf, readingTimeOf } from "./src/content/text";
 
 const protection = {
@@ -42,6 +44,50 @@ const taxonomy = {
   category: z.string().optional(),
 };
 
+/**
+ * A protected document must not point at the published copy of any content
+ * asset. Those copies exist only for public documents, so depending on one is
+ * a leak by construction — and a silent 404 once the sync step stops copying
+ * it. Site-wide assets (`/assets/avatar.png`) are unaffected.
+ */
+function assertNoPublishedRefs(
+  collection: AssetCollection,
+  slug: string,
+  refs: (string | undefined)[],
+) {
+  for (const ref of refs) {
+    if (!ref?.startsWith(`/assets/${collection}/`)) continue;
+
+    const name = ref.slice(ref.lastIndexOf("/") + 1);
+    throw new Error(
+      `${collection}/${slug}: a password-protected document references "${ref}", ` +
+        `which is the published copy of another document's asset. Reference it ` +
+        `relatively (e.g. "${name}") so it is served through /vault instead.`,
+    );
+  }
+}
+
+/** Frontmatter asset refs rewritten for this document's namespace. */
+function resolveRefs(
+  collection: AssetCollection,
+  slug: string,
+  refs: string[],
+  gated: boolean,
+): string[] {
+  return refs.map((ref) => assetUrl(collection, slug, ref, gated));
+}
+
+/** The shared plugin list plus a per-document asset-path rewrite. */
+function pluginsFor(collection: AssetCollection, slug: string, gated: boolean) {
+  return {
+    remarkPlugins: [
+      ...remarkPlugins,
+      remarkAssetPaths({ collection, slug, gated }),
+    ],
+    rehypePlugins,
+  };
+}
+
 const posts = defineCollection({
   name: "posts",
   directory: "content/posts",
@@ -61,10 +107,17 @@ const posts = defineCollection({
     content: z.string(),
   }),
   transform: async (doc, ctx) => {
+    const slug = doc._meta.path;
+    const gated = doc.passwordProtected === true;
+    if (gated) assertNoPublishedRefs("posts", slug, [doc.image]);
+
     const { words, minutes } = readingTimeOf(doc.content);
     return {
       ...doc,
-      mdx: await compileMDX(ctx, doc, { remarkPlugins, rehypePlugins }),
+      image: doc.image
+        ? resolveRefs("posts", slug, [doc.image], gated)[0]
+        : undefined,
+      mdx: await compileMDX(ctx, doc, pluginsFor("posts", slug, gated)),
       words,
       minutes,
       excerpt: excerptOf(doc.content),
@@ -83,10 +136,17 @@ const moments = defineCollection({
     mood: z.string().optional(),
     content: z.string(),
   }),
-  transform: async (doc, ctx) => ({
-    ...doc,
-    mdx: await compileMDX(ctx, doc, { remarkPlugins, rehypePlugins }),
-  }),
+  transform: async (doc, ctx) => {
+    const slug = doc._meta.path;
+    const gated = doc.passwordProtected === true;
+    if (gated) assertNoPublishedRefs("moments", slug, doc.images);
+
+    return {
+      ...doc,
+      images: resolveRefs("moments", slug, doc.images, gated),
+      mdx: await compileMDX(ctx, doc, pluginsFor("moments", slug, gated)),
+    };
+  },
 });
 
 const albums = defineCollection({
@@ -103,10 +163,28 @@ const albums = defineCollection({
       .default([]),
     content: z.string(),
   }),
-  transform: async (doc, ctx) => ({
-    ...doc,
-    mdx: await compileMDX(ctx, doc, { remarkPlugins, rehypePlugins }),
-  }),
+  transform: async (doc, ctx) => {
+    const slug = doc._meta.path;
+    const gated = doc.passwordProtected === true;
+    if (gated) {
+      assertNoPublishedRefs("albums", slug, [
+        doc.cover,
+        ...doc.photos.map((photo) => photo.src),
+      ]);
+    }
+
+    return {
+      ...doc,
+      cover: doc.cover
+        ? resolveRefs("albums", slug, [doc.cover], gated)[0]
+        : undefined,
+      photos: doc.photos.map((photo) => ({
+        ...photo,
+        src: resolveRefs("albums", slug, [photo.src], gated)[0],
+      })),
+      mdx: await compileMDX(ctx, doc, pluginsFor("albums", slug, gated)),
+    };
+  },
 });
 
 const series = defineCollection({

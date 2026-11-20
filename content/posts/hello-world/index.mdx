@@ -1,0 +1,72 @@
+---
+title: 每一行文字都是一次呼吸
+description: 关于阅读、排版与中文正文的一点笔记。
+image: example.jpg
+published: 2026-09-12
+updated: 2026-11-02
+pinned: true
+tags: [阅读, 排版]
+category: 随笔
+series: typesetting
+seriesOrder: 1
+lang: zh_CN
+---
+
+这是第一段。中文正文的阅读体验，很大程度上取决于行长、行高与字体。太宽的行会让人频繁回溯，太窄的行则让节奏变得零碎。四十二个字符左右的行长，通常是一个舒服的落点。
+
+段落之间留出足够的空白，比任何装饰都更能帮助眼睛休息。
+
+## 行长与节奏
+
+一段文字读起来是否顺畅，取决于细节。字号、行高、字距三者互相牵制，任何一项失衡都会让人分心。
+
+<Alert type="tip" title="关于行高">
+  中文正文的行高建议在 1.8 到 1.9 之间，比拉丁文字要松一些，因为汉字是方块字，
+  笔画密度更高。
+</Alert>
+
+英文字符与中文字符混排时，字体栈会把两者分开处理：拉丁字母用 Inter，汉字用霞鹜文楷。
+
+## 代码块
+
+行内代码比如 `const a = 1`，以及一个带标题的代码块：
+
+```ts title="src/example.ts"
+export function greet(name: string): string {
+  return `你好，${name}`;
+}
+```
+
+```ts collapse="2-4"
+function deep(a: number): number {
+  return a + 1;
+}
+```
+
+## 公式
+
+行内公式 $E = mc^2$ 与独立公式：
+
+$$
+\int_{-\infty}^{\infty} e^{-x^2}\,dx = \sqrt{\pi}
+$$
+
+## 折叠与标签页
+
+<Collapse title="展开看看">
+  这里是被折叠的内容。它使用原生 `<details>` 元素实现，所以在没有 JavaScript 的情况下依然可以展开。
+</Collapse>
+
+## 其他细节
+
+被遮住的内容可以这样写：||这是一个剧透||。
+
+> [!NOTE]
+> 这是一段普通的引用。按照设计，它不会自动变成警告框。
+
+![示例图片](example.jpg)
+
+| 项目 | 说明         |
+| ---- | ------------ |
+| 行长 | 约 42 个汉字 |
+| 行高 | 1.85         |

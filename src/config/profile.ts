@@ -1,5 +1,5 @@
 export const profileConfig = {
-  avatar: "/images/avatar.png",
+  avatar: "/assets/avatar.png",
   name: "Ami",
   bio: "写字、读书、记录。",
   links: [

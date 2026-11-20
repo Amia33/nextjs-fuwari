@@ -1,0 +1,34 @@
+---
+title: 用 TypeScript 写内容校验的一点经验
+description: zod 在构建期挡住的那些错误，比运行时便宜得多。
+published: 2026-03-02
+tags: [TypeScript, 前端]
+category: 技术
+lang: zh_CN
+image: cover-e.jpg
+---
+
+内容型站点的 frontmatter 很容易出错：漏一个字段、日期写成字符串、布尔值写成 `"true"`。
+
+这些错误如果等到渲染时才发现，排查成本很高。放到构建期就简单得多。
+
+## 用 zod 描述期望的形状
+
+```ts
+const schema = z.object({
+  title: z.string(),
+  published: z.coerce.date(),
+  tags: z.array(z.string()).default([]),
+});
+```
+
+`z.coerce.date()` 是关键：YAML 里的 `2026-03-02` 会被解析成字符串，但也可能是 `Date` 对象，强制转换能让两种写法都通过。
+
+## 一个容易忽略的点
+
+zod 默认会**丢弃**未声明的字段。这意味着你想校验的「不该出现的字段」如果没写进 schema，就永远检查不到。
+
+<Alert type="warning" title="这是一个真实的坑">
+  我原本想拒绝 frontmatter 里的明文字段，但因为它不在 schema 里，`superRefine`
+  根本看不到它。必须显式声明一个必定失败的字段才能挡住。
+</Alert>

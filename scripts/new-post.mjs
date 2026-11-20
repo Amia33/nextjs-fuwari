@@ -57,9 +57,9 @@ if (!SLUG.test(slug)) {
   process.exit(1);
 }
 
-const directory = join(process.cwd(), "content", "posts");
+const directory = join(process.cwd(), "content", "posts", slug);
 await mkdir(directory, { recursive: true });
-const filePath = join(directory, `${slug}.mdx`);
+const filePath = join(directory, "index.mdx");
 
 try {
   await access(filePath);

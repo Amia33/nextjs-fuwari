@@ -1,0 +1,28 @@
+---
+title: 私密的笔记
+description: 一篇受密码保护的短文。
+image: album-autumn-1.jpg
+published: 2026-11-15
+tags: [私人]
+category: 随笔
+lang: zh_CN
+passwordProtected: true
+passwordHash: "$argon2id$v=19$m=19456,t=2,p=1$1XLknH67ITWGZg385H6Udw$dZKIJQnR2HmlL3wJ6X8LpgBmHUDRbeZoQ6+bEFfzEDs"
+passwordHint: 四个词
+---
+
+**这段内容只有输入密码之后才会出现。** 它不应该出现在预渲染的 HTML、RSC payload、RSS 或者任何客户端 bundle 里。
+
+如果你在未解锁状态下就能在页面源码中找到这句话，那么保护机制是失效的。
+
+## 解锁之后才看得见
+
+这一节验证两件事：正文出现在解锁之后，目录也同步出现。
+
+### 目录不会提前泄露
+
+侧边栏的目录是从正文的标题生成的。如果它在解锁前就渲染，光看小节标题就能猜出文章写了什么，这道门就形同虚设。所以目录和正文共用同一个判断。
+
+## Photoswipe 与正文
+
+解锁之后，正文里的图片同样可以点开大图。
