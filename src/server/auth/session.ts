@@ -1,7 +1,9 @@
 import "server-only";
 
-import { createHmac, timingSafeEqual } from "node:crypto";
+import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
+
+import { getGate } from "./gate";
 
 export type GateKind = "post" | "moment" | "album";
 
@@ -24,13 +26,32 @@ function sign(payload: string): string {
   return createHmac("sha256", secret()).update(payload).digest("base64url");
 }
 
-function cookieName(kind: GateKind, id: string): string {
-  return `pp_${kind}_${id.replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 40)}`;
+function shortHash(value: string): string {
+  return createHash("sha256").update(value).digest("base64url").slice(0, 16);
 }
 
-export function createToken(kind: GateKind, id: string): string {
+/**
+ * Cookie names carry a digest of the item id, not the id itself: two long
+ * slugs must not collide on one cookie, and the cookie jar should not spell
+ * out which private pages exist.
+ *
+ * The `__Host-` prefix pins the cookie to this origin and to `path: "/"`. It
+ * requires `Secure`, which is dropped in development, so the prefix is too —
+ * browsers silently reject a `__Host-` cookie set over http.
+ */
+function cookieName(kind: GateKind, id: string): string {
+  const prefix = process.env.NODE_ENV === "production" ? "__Host-" : "";
+  return `${prefix}pp_${kind}_${shortHash(id)}`;
+}
+
+/**
+ * The token carries a fingerprint of the password hash it was minted against,
+ * so editing `passwordHash` invalidates every outstanding cookie for that item
+ * without touching the signing secret.
+ */
+export function createToken(kind: GateKind, id: string, hash: string): string {
   const expiresAt = Date.now() + MAX_AGE_SECONDS * 1000;
-  const payload = `${kind}:${id}.${expiresAt}`;
+  const payload = `${kind}:${id}.${expiresAt}.${shortHash(hash)}`;
   return `${expiresAt}.${sign(payload)}`;
 }
 
@@ -38,6 +59,7 @@ export function verifyToken(
   kind: GateKind,
   id: string,
   token: string | undefined,
+  hash: string,
 ): boolean {
   if (!token) return false;
 
@@ -48,7 +70,7 @@ export function verifyToken(
   const signature = token.slice(separator + 1);
   if (!Number.isFinite(expiresAt) || expiresAt < Date.now()) return false;
 
-  const expected = sign(`${kind}:${id}.${expiresAt}`);
+  const expected = sign(`${kind}:${id}.${expiresAt}.${shortHash(hash)}`);
   const a = Buffer.from(signature);
   const b = Buffer.from(expected);
   if (a.length !== b.length) return false;
@@ -56,19 +78,27 @@ export function verifyToken(
 }
 
 export async function isUnlocked(kind: GateKind, id: string): Promise<boolean> {
+  const gate = getGate(kind, id);
+  if (!gate) return false;
+
   const store = await cookies();
   const token = store.get(cookieName(kind, id))?.value;
-  return verifyToken(kind, id, token);
+  return verifyToken(kind, id, token, gate.hash);
 }
 
-export async function unlockCookie(kind: GateKind, id: string) {
+export async function unlockCookie(kind: GateKind, id: string, hash: string) {
   const store = await cookies();
-  store.set(cookieName(kind, id), createToken(kind, id), {
+  store.set(cookieName(kind, id), createToken(kind, id, hash), {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    // `strict` keeps the unlock cookie off cross-site requests entirely. The
+    // trade-off: arriving from an external link, the first request carries no
+    // cookie, so a visitor sees the gate once and unlocks it. For a private
+    // blog that is a good trade against CSRF.
+    sameSite: "strict",
     path: "/",
     maxAge: MAX_AGE_SECONDS,
+    priority: "high",
   });
 }
 

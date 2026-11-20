@@ -21,6 +21,7 @@ export function PasswordGate({
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (pending) return;
     setError(null);
 
     startTransition(async () => {
@@ -58,8 +59,10 @@ export function PasswordGate({
           name="password"
           autoComplete="current-password"
           required
+          minLength={1}
+          maxLength={256}
           value={password}
-          onChange={(event) => setPassword(event.target.value)}
+          onChange={(event) => setPassword(event.target.value.slice(0, 256))}
           placeholder={t("gate.placeholder")}
           className="input input-bordered w-full sm:max-w-xs"
           aria-label={t("gate.placeholder")}
