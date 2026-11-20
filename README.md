@@ -136,8 +136,10 @@ say) to move **public** content assets off this deployment; gated media always s
 | `NEXT_PUBLIC_MEDIA_ORIGIN` | optional external origin for public content assets            |
 
 Rate limiting is shared across instances in Redis, so five wrong passwords in fifteen minutes
-throttle the attempt no matter which lambda serves it. Without a working connection the limiter
-**fails open** and warns in the function logs — fine locally, unacceptable in production.
+throttle the attempt no matter which lambda serves it. The limiter is **fail-closed**: without a
+working connection the unlock is refused rather than allowed, because the exposure is unbounded
+Argon2 work. `next build` refuses to run at all when the Upstash variables are missing (see below);
+at request time an unreachable Redis logs `[rate-limit] Redis unavailable` and refuses.
 
 ### Deploying to Vercel
 
@@ -159,8 +161,8 @@ Checklist after the first deploy:
 
 1. Set `GATE_SECRET` (`openssl rand -base64 32`). Without it the build succeeds but every unlock
    throws in production.
-2. Set the Upstash variables (below), then confirm the logs no longer print
-   `Rate limiting is NOT active`.
+2. Set the Upstash variables (below). **The build fails without them** — that is deliberate, so a
+   deployment cannot go live with the gate refusing every unlock. Local `pnpm dev` is not gated.
 3. Confirm a public asset loads: `/assets/avatar.png` is committed and should be `200`, and so
    should `/assets/posts/<slug>/cover.jpg` once the sync step ran.
 4. Add the Firewall rules (below) and enable BotID Deep Analysis.
@@ -180,6 +182,10 @@ several variables; which ones to use:
 The code accepts either naming pair, so you do not need to rename anything. Only the URL and the
 **write** token are required; `GATE_SECRET` is separate.
 
+If they are missing, `next build` stops with a message naming both pairs. The check lives in
+`next.config.ts` because Next loads `.env*` before evaluating that file, so it sees the same values
+the runtime will. `pnpm dev` and `pnpm start` skip it.
+
 #### Vercel Firewall
 
 1. Project → **Firewall** → **Configure** → **+ New Rule**.
@@ -196,9 +202,23 @@ the unlock action answers on `/posts/<slug>`, `/moments`, and `/albums/<id>` ali
 #### BotID
 
 `instrumentation-client.ts` registers `initBotId()` for the paths the unlock action posts to, and
-`unlockContent` calls `checkBotId()` before touching Redis or Argon2. A detected bot gets the same
-`"throttled"` response as a rate-limited visitor, so the page does not teach an attacker which
-defence fired. BotID always reports `isBot: false` in local development.
+`unlockContent` calls `checkBotId()` before touching Redis or Argon2. BotID always reports
+`isBot: false` in local development.
+
+A BotID rejection and a rate-limit rejection are **distinct to the visitor**: a flagged browser is
+told it was detected as automated and to reload, because waiting out the rate-limit window cannot
+help it — it would just be flagged again. Headless browsers, some privacy tools and corporate
+proxies trip BotID, so this is a real path, not a hypothetical one. Both are logged and are
+distinguishable in the function logs:
+
+```
+[gate] BotID flagged post/<slug>: refused as "bot"
+[gate] rate limited post/<slug> (client): refused as "throttled"
+```
+
+The second line's parenthetical is `client`, `item`, or `unavailable` (Redis could not be
+consulted). Only a bot verdict is `"bot"`; everything the limiter refuses — including a Redis
+outage, since the limiter is fail-closed — is `"throttled"`.
 
 Testing note: BotID requires a real browser session. `curl` and direct route hits are classified
 as bots in production, so exercise protected routes through the UI.
