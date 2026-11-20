@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { formatDate, relativeFormat } from "@/src/i18n";
+import { relativeFormat } from "@/src/i18n";
 
 const MS_PER_DAY = 86_400_000;
 
@@ -12,11 +12,7 @@ function diffInDays(from: Date, to: Date): number {
   return Math.round((b - a) / MS_PER_DAY);
 }
 
-/**
- * `null` until the visitor's clock has been read on the client. Prerendering
- * must never observe the current time, so the first render stays deterministic.
- */
-function useDayTick(): Date | null {
+function useDayTick(): Date {
   const [today, setToday] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -34,16 +30,11 @@ function useDayTick(): Date | null {
     };
   }, []);
 
-  return today;
+  return today ?? new Date();
 }
 
 export function DateAgo({ iso }: { iso: string }) {
   const today = useDayTick();
-
-  // Until the client knows "today", show the absolute date. It matches the
-  // Suspense fallback used while prerendering, so hydration causes no shift.
-  if (!today) return <span>{formatDate(new Date(iso))}</span>;
-
   const days = diffInDays(new Date(iso), today);
 
   if (days < 1) return <span>today</span>;
