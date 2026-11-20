@@ -14,7 +14,7 @@ export function PostCard({ post, index }: { post: PublicPost; index: number }) {
           transitionTypes={["nav-forward"]}
           className="flex flex-col overflow-hidden rounded-box no-underline sm:flex-row-reverse sm:items-stretch sm:gap-6 sm:p-3 sm:transition-colors sm:hover:bg-base-200"
         >
-          <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden rounded-box bg-base-200 sm:aspect-[4/3] sm:w-44">
+          <div className="relative aspect-[2/1] w-full shrink-0 overflow-hidden rounded-box bg-base-200 sm:aspect-[4/3] sm:w-44">
             {post.passwordProtected ? (
               <LockedCover />
             ) : post.image ? (
@@ -22,7 +22,7 @@ export function PostCard({ post, index }: { post: PublicPost; index: number }) {
                 src={post.image}
                 alt=""
                 fill
-                sizes="(max-width: 640px) 50vw, 176px"
+                sizes="(max-width: 640px) 100vw, 176px"
                 priority={index < 2}
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
                 style={{ viewTransitionName: `cover-${post._meta.path}` }}

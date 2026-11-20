@@ -11,7 +11,7 @@ export function PostList({ posts }: { posts: PublicPost[] }) {
   }
 
   return (
-    <ul className="grid grid-cols-2 gap-x-4 gap-y-6 max-[359px]:grid-cols-1 sm:grid-cols-1 sm:gap-0 sm:divide-y sm:divide-base-300">
+    <ul className="flex flex-col gap-3 sm:gap-0 sm:divide-y sm:divide-base-300">
       {posts.map((post, index) => (
         <PostCard key={post._meta.path} post={post} index={index} />
       ))}
