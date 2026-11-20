@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { LockedCover } from "@/src/components/atoms/LockedCover";
 import { getAlbums } from "@/src/content/albums";
 import { PageShell } from "@/src/components/organisms/PageShell";
 import { formatDate, t } from "@/src/i18n";
@@ -42,9 +43,7 @@ export default function AlbumsPage() {
                       }}
                     />
                   ) : album.passwordProtected ? (
-                    <div className="flex h-full items-center justify-center text-xs opacity-40">
-                      <span aria-hidden="true">🔒</span>
-                    </div>
+                    <LockedCover />
                   ) : null}
                 </div>
                 <p className="mt-2 truncate text-sm font-medium">

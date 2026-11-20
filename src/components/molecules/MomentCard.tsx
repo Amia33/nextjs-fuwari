@@ -68,6 +68,7 @@ export function MomentCard({
                       alt=""
                       fill
                       sizes="(max-width: 768px) 100vw, 24rem"
+                      unoptimized={src.startsWith("/vault/")}
                       className="object-cover"
                     />
                   </a>

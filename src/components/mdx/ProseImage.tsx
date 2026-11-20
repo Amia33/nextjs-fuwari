@@ -12,6 +12,10 @@ export function ProseImage({ src, alt, width, height }: ProseImageProps) {
   const w = Number(width) || 1200;
   const h = Number(height) || 800;
 
+  // Vault media is gated per visitor: the optimizer fetches sources without the
+  // visitor's cookies, so those URLs must bypass it and load directly.
+  const gated = src.startsWith("/vault/");
+
   return (
     <a
       href={src}
@@ -26,6 +30,7 @@ export function ProseImage({ src, alt, width, height }: ProseImageProps) {
         width={w}
         height={h}
         sizes="(max-width: 768px) 100vw, 42em"
+        unoptimized={gated}
         className="h-auto w-full"
       />
     </a>

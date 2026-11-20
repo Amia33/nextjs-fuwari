@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { LockedCover } from "@/src/components/atoms/LockedCover";
 import type { PublicPost } from "@/src/content/posts";
 import { formatDate, t } from "@/src/i18n";
 
@@ -14,7 +15,9 @@ export function PostCard({ post, index }: { post: PublicPost; index: number }) {
           className="flex flex-col overflow-hidden rounded-box no-underline sm:flex-row-reverse sm:items-stretch sm:gap-6 sm:p-3 sm:transition-colors sm:hover:bg-base-200"
         >
           <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden rounded-box bg-base-200 sm:aspect-[4/3] sm:w-44">
-            {post.image ? (
+            {post.passwordProtected ? (
+              <LockedCover />
+            ) : post.image ? (
               <Image
                 src={post.image}
                 alt=""

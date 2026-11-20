@@ -12,6 +12,9 @@ import { formatDate, t } from "@/src/i18n";
 
 type Props = PageProps<"/albums/[id]">;
 
+// The gate reads cookies, which is request data.
+export const instant = false;
+
 export async function generateStaticParams() {
   return getAlbums().map((album) => ({ id: album._meta.path }));
 }
@@ -79,6 +82,7 @@ export default async function AlbumDetail({ params }: Props) {
                           width={800}
                           height={533}
                           sizes="(max-width: 640px) 100vw, 24rem"
+                          unoptimized={photo.src.startsWith("/vault/")}
                           className="h-auto w-full"
                         />
                       </a>

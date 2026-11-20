@@ -4,12 +4,15 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 
+import { LockedCover } from "@/src/components/atoms/LockedCover";
 import { DateAgo, DateSpan } from "@/src/components/molecules/RelativeTime";
 import { PageShell } from "@/src/components/organisms/PageShell";
 import { ProtectedBody } from "@/src/components/organisms/ProtectedBody";
 import { PhotoSwipeProvider } from "@/src/components/organisms/PhotoSwipeProvider";
 import { PostToc } from "@/src/components/organisms/PostToc";
 import { getPostBySlug, getSortedPosts } from "@/src/content/posts";
+import { getGate } from "@/src/server/auth/gate";
+import { isUnlocked } from "@/src/server/auth/session";
 import { articleConfig } from "@/src/config/article";
 import { siteConfig } from "@/src/config/site";
 import { formatDate, formatDateIso, t } from "@/src/i18n";
@@ -18,6 +21,35 @@ import { extractHeadings } from "@/src/content/headings";
 type Props = PageProps<"/posts/[...slug]">;
 
 export const instant = false;
+
+/**
+ * The cover is part of the article, so it stays hidden until the post unlocks.
+ * Reading the cookie here keeps that decision inside its own `<Suspense>`
+ * instead of making the whole page wait on it.
+ */
+async function PostCover({ id, image }: { id: string; image: string }) {
+  if (getGate("post", id) && !(await isUnlocked("post", id))) {
+    return (
+      <div className="mb-8 aspect-[16/9] w-full overflow-hidden rounded-box bg-base-200">
+        <LockedCover />
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative mb-8 aspect-[16/9] w-full overflow-hidden rounded-box bg-base-200">
+      <Image
+        src={image}
+        alt=""
+        fill
+        sizes="(max-width: 1024px) 100vw, 56rem"
+        unoptimized={image.startsWith("/vault/")}
+        className="object-cover"
+        style={{ viewTransitionName: `cover-${id}` }}
+      />
+    </div>
+  );
+}
 
 export async function generateStaticParams() {
   return getSortedPosts().map((post) => ({ slug: [post._meta.path] }));
@@ -117,16 +149,13 @@ export default async function PostPage({ params }: Props) {
         </header>
 
         {post.image ? (
-          <div className="relative mb-8 aspect-[16/9] w-full overflow-hidden rounded-box bg-base-200">
-            <Image
-              src={post.image}
-              alt=""
-              fill
-              sizes="(max-width: 1024px) 100vw, 56rem"
-              className="object-cover"
-              style={{ viewTransitionName: `cover-${post._meta.path}` }}
-            />
-          </div>
+          <Suspense
+            fallback={
+              <div className="mb-8 aspect-[16/9] w-full rounded-box bg-base-200" />
+            }
+          >
+            <PostCover id={post._meta.path} image={post.image} />
+          </Suspense>
         ) : null}
 
         <Suspense
