@@ -249,8 +249,8 @@ an R2 custom domain usually means a Worker is needed in front.
 `Referrer-Policy`, `Permissions-Policy`, `Cross-Origin-Opener-Policy`, and a CSP in
 **report-only** mode. CSP is reported, not enforced: `script-src 'self'` would block the inline
 theme script, and a nonce would opt the whole app out of static rendering. Enforcing it needs an
-inline-script hash or SRI. `proxy.ts` narrows `Access-Control-Allow-Origin` to this site's origin
-instead of `*`.
+inline-script hash or SRI. The same rule set narrows `Access-Control-Allow-Origin` to this site's
+origin instead of `*`, so no Proxy is needed for it.
 
 ### Language
 

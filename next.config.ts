@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 import { withContentCollections } from "@content-collections/next";
 
 import { TOKEN_NAMES, URL_NAMES, upstash } from "./src/server/auth/upstash-env";
+import { siteConfig } from "./src/config/site";
 
 /**
  * Security headers, applied to every route.
@@ -30,6 +31,14 @@ const CSP_REPORT_ONLY = [
 ].join("; ");
 
 const securityHeaders = [
+  {
+    // Nothing here is meant to be readable cross-origin, so the origin is
+    // pinned to this site instead of the blanket `*` the platform default
+    // sends. Set here rather than in a Proxy: a Proxy costs a Node runtime
+    // hop on every matched request just to add one header.
+    key: "Access-Control-Allow-Origin",
+    value: siteConfig.url,
+  },
   {
     key: "Content-Security-Policy-Report-Only",
     value: CSP_REPORT_ONLY,
