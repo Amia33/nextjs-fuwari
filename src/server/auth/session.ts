@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
+import { io } from "next/cache";
 import { cookies } from "next/headers";
 
 import { getGate } from "./gate";
@@ -83,6 +84,15 @@ export async function isUnlocked(kind: GateKind, id: string): Promise<boolean> {
 
   const store = await cookies();
   const token = store.get(cookieName(kind, id))?.value;
+  if (!token) return false;
+
+  // Validating the token compares its expiry against the clock. Declare that
+  // as request-time work, so the runtime prerender (the partial shell, and
+  // prefetches) does not trip the "unstable value Date.now()" guard. Only a
+  // visitor carrying an unlock cookie gets here, which is why the error was
+  // limited to gated routes; the anonymous shell is untouched.
+  await io();
+
   return verifyToken(kind, id, token, gate.hash);
 }
 
