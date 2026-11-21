@@ -6,6 +6,7 @@ import { PageShell } from "@/src/components/organisms/PageShell";
 import { getPostsBySeries } from "@/src/content/posts";
 import { getSeries, getSeriesBySlug } from "@/src/content/series";
 import { t } from "@/src/i18n";
+import { pageMetadata } from "@/src/lib/metadata";
 
 type Props = PageProps<"/series/[slug]">;
 
@@ -30,7 +31,11 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const doc = getSeriesBySlug(slug);
-  return { title: doc?.title ?? slug };
+  return pageMetadata({
+    path: `/series/${slug}`,
+    title: doc?.title ?? slug,
+    description: doc?.description || undefined,
+  });
 }
 
 export default async function SeriesDetail({ params }: Props) {

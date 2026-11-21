@@ -3,8 +3,13 @@ import Link from "next/link";
 import { getSeriesList } from "@/src/content/posts";
 import { PageShell } from "@/src/components/organisms/PageShell";
 import { t } from "@/src/i18n";
+import { pageMetadata } from "@/src/lib/metadata";
 
-export const metadata = { title: t("series.title") };
+export const metadata = pageMetadata({
+  path: "/series",
+  title: t("series.title"),
+  description: t("series.description"),
+});
 
 export default function SeriesPage() {
   const series = getSeriesList();

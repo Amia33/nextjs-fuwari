@@ -9,6 +9,7 @@ import { ProtectedBody } from "@/src/components/organisms/ProtectedBody";
 import { PhotoSwipeProvider } from "@/src/components/organisms/PhotoSwipeProvider";
 import { getAlbumById, getAlbums } from "@/src/content/albums";
 import { formatDate, t } from "@/src/i18n";
+import { pageMetadata } from "@/src/lib/metadata";
 
 type Props = PageProps<"/albums/[id]">;
 
@@ -22,11 +23,18 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
   const album = getAlbumById(id);
-  return {
+  return pageMetadata({
+    path: `/albums/${id}`,
     title: album?.title ?? id,
-    description: album?.description,
-    robots: album?.passwordProtected ? { index: false } : undefined,
-  };
+    description: album?.description || undefined,
+    // The cover is the album's own artwork; fall back to the site banner.
+    image: album?.cover,
+    imageAlt: album?.title,
+    // A gated album stays out of the index and carries no canonical.
+    noindex: album?.passwordProtected,
+    type: "article",
+    publishedTime: album?.published.toISOString(),
+  });
 }
 
 export default async function AlbumDetail({ params }: Props) {

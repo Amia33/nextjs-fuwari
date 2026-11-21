@@ -3,8 +3,13 @@ import Link from "next/link";
 import { getCategoryList } from "@/src/content/posts";
 import { PageShell } from "@/src/components/organisms/PageShell";
 import { t } from "@/src/i18n";
+import { pageMetadata } from "@/src/lib/metadata";
 
-export const metadata = { title: t("categories.title") };
+export const metadata = pageMetadata({
+  path: "/categories",
+  title: t("categories.title"),
+  description: t("categories.description"),
+});
 
 export default function CategoriesPage() {
   const categories = getCategoryList().filter((item) => item.name);

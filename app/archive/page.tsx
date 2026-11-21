@@ -8,6 +8,7 @@ import {
 import { PageShell } from "@/src/components/organisms/PageShell";
 import { getSortedPosts } from "@/src/content/posts";
 import { t } from "@/src/i18n";
+import { pageMetadata } from "@/src/lib/metadata";
 
 /**
  * The archive is one fully static page for every filter URL.
@@ -27,7 +28,17 @@ import { t } from "@/src/i18n";
  */
 export const ensureStatic = "navigation";
 
-export const metadata = { title: t("archive.title") };
+/**
+ * Every filter variant (`?tag=`, `?category=`) shares this canonical, because
+ * filtering happens in the browser and the query string changes nothing
+ * server-side. Pointing them all at `/archive` is what stops them being read
+ * as a set of near-duplicate pages.
+ */
+export const metadata = pageMetadata({
+  path: "/archive",
+  title: t("archive.title"),
+  description: t("archive.description"),
+});
 
 export default function ArchivePage() {
   const posts: ArchivePost[] = getSortedPosts().map((post) => ({

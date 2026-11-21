@@ -18,6 +18,22 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   metadataBase: new URL(siteConfig.url),
+  // Pages override these through `pageMetadata()`. The defaults keep a route
+  // that sets nothing (or sets only a title) from shipping bare social tags.
+  openGraph: {
+    type: "website",
+    siteName: siteConfig.title,
+    title: siteConfig.title,
+    description: siteConfig.description,
+    url: "/",
+    images: [{ url: siteConfig.banner.src, width: 1600, height: 900 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: [siteConfig.banner.src],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

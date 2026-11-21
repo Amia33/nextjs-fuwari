@@ -5,8 +5,13 @@ import { LockedCover } from "@/src/components/atoms/LockedCover";
 import { getAlbums } from "@/src/content/albums";
 import { PageShell } from "@/src/components/organisms/PageShell";
 import { formatDate, t } from "@/src/i18n";
+import { pageMetadata } from "@/src/lib/metadata";
 
-export const metadata = { title: t("albums.title") };
+export const metadata = pageMetadata({
+  path: "/albums",
+  title: t("albums.title"),
+  description: t("albums.description"),
+});
 
 export default function AlbumsPage() {
   const albums = getAlbums();

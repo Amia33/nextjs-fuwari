@@ -17,6 +17,7 @@ import { articleConfig } from "@/src/config/article";
 import { siteConfig } from "@/src/config/site";
 import { formatDate, formatDateIso, t } from "@/src/i18n";
 import { extractHeadings } from "@/src/content/headings";
+import { pageMetadata } from "@/src/lib/metadata";
 
 type Props = PageProps<"/posts/[...slug]">;
 
@@ -57,20 +58,23 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug.join("/"));
+  const path = slug.join("/");
+  const post = getPostBySlug(path);
   if (!post) return {};
 
-  return {
+  return pageMetadata({
+    path: `/posts/${path}`,
     title: post.title,
     description: post.description,
-    robots: post.passwordProtected ? { index: false } : undefined,
-    openGraph: {
-      title: post.title,
-      description: post.description,
-      type: "article",
-      publishedTime: post.published.toISOString(),
-    },
-  };
+    // The cover is the article's own image; fall back to the site banner.
+    image: post.image,
+    imageAlt: post.title,
+    // A gated post stays out of the index and carries no canonical.
+    noindex: post.passwordProtected,
+    type: "article",
+    publishedTime: post.published.toISOString(),
+    modifiedTime: post.updated?.toISOString(),
+  });
 }
 
 export default async function PostPage({ params }: Props) {

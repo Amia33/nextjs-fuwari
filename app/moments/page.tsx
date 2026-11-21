@@ -6,8 +6,13 @@ import { PhotoSwipeProvider } from "@/src/components/organisms/PhotoSwipeProvide
 import { getMoments } from "@/src/content/moments";
 import { t } from "@/src/i18n";
 import { isUnlocked } from "@/src/server/auth/session";
+import { pageMetadata } from "@/src/lib/metadata";
 
-export const metadata = { title: t("moments.title") };
+export const metadata = pageMetadata({
+  path: "/moments",
+  title: t("moments.title"),
+  description: t("moments.description"),
+});
 
 // The gate reads cookies, which is request data.
 export const instant = false;

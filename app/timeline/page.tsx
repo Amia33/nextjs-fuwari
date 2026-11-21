@@ -1,8 +1,13 @@
 import { timeline } from "@/src/data/timeline";
 import { PageShell } from "@/src/components/organisms/PageShell";
 import { t } from "@/src/i18n";
+import { pageMetadata } from "@/src/lib/metadata";
 
-export const metadata = { title: t("timeline.title") };
+export const metadata = pageMetadata({
+  path: "/timeline",
+  title: t("timeline.title"),
+  description: t("timeline.description"),
+});
 
 export default function TimelinePage() {
   return (
