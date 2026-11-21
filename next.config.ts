@@ -30,6 +30,9 @@ const CSP_REPORT_ONLY = [
   "upgrade-insecure-requests",
 ].join("; ");
 
+const assetCacheControl =
+  "public, max-age=604800, stale-while-revalidate=86400";
+
 const securityHeaders = [
   {
     // Nothing here is meant to be readable cross-origin, so the origin is
@@ -114,9 +117,35 @@ const baseConfig: NextConfig = {
         pathname: "/**",
       },
     ],
+    // The largest source on the site is the 1600×900 banner, so advertising
+    // 1920/2048/3840 only asked the optimizer for variants it could not really
+    // produce: it never upscales (`withoutEnlargement`), so those requests came
+    // back as source-resolution images wearing a bigger `w` label. Dropping
+    // them below the real source width also turns a direct request for one into
+    // a 400 instead of a mislabelled image.
+    deviceSizes: [640, 750, 828, 1080, 1200, 1600],
+    // Optimized variants outlive the 4h default to match the one-week policy
+    // set for the source assets in `headers()`. Replacing a file at the same
+    // path will not refresh its variants until then — rename it instead.
+    minimumCacheTTL: 604800,
   },
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    // Content assets are copied into `public/` at build time and never change
+    // under a given name, but they carry no content hash, so they cannot be
+    // `immutable`. A week's freshness with a day of stale-while-revalidate
+    // removes the per-view conditional request without stranding a replaced
+    // file for a year.
+    const contentAsset = [{ key: "Cache-Control", value: assetCacheControl }];
+
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      // `/vault/**` must stay `private, no-store`; no pattern below covers it.
+      { source: "/assets/:path*", headers: contentAsset },
+      { source: "/fonts/:path*", headers: contentAsset },
+      { source: "/katex.css", headers: contentAsset },
+      { source: "/photoswipe.css", headers: contentAsset },
+      { source: "/favicon.ico", headers: contentAsset },
+    ];
   },
   // The vault route reads gated media from `content/` with `fs`, which the
   // tracer cannot follow. Without this the files are missing from the function
