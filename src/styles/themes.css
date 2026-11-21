@@ -17,10 +17,14 @@
   --color-base-300: oklch(92.5% 0.008 85);
   --color-base-content: oklch(28% 0.015 60);
 
-  --color-primary: oklch(52% 0.1 250);
-  --color-primary-content: oklch(98% 0.01 250);
-  --color-secondary: oklch(60% 0.06 30);
-  --color-secondary-content: oklch(98% 0.01 30);
+  /* 朱砂 seal vermilion: the ink-and-seal accent a Chinese notebook earns,
+     rather than the blue every technical surface reaches for by default. */
+  --color-primary: oklch(52% 0.17 32);
+  --color-primary-content: oklch(98% 0.01 60);
+
+  /* 墨蓝 ink blue, held back as the supporting tone. */
+  --color-secondary: oklch(42% 0.06 250);
+  --color-secondary-content: oklch(98% 0.01 250);
   --color-accent: oklch(62% 0.08 160);
   --color-accent-content: oklch(98% 0.01 160);
   --color-neutral: oklch(40% 0.01 60);
@@ -53,10 +57,10 @@
   --color-base-300: oklch(30% 0.016 265);
   --color-base-content: oklch(88% 0.008 265);
 
-  --color-primary: oklch(72% 0.1 250);
-  --color-primary-content: oklch(20% 0.02 250);
-  --color-secondary: oklch(70% 0.06 30);
-  --color-secondary-content: oklch(20% 0.02 30);
+  --color-primary: oklch(72% 0.14 32);
+  --color-primary-content: oklch(20% 0.03 32);
+  --color-secondary: oklch(68% 0.06 250);
+  --color-secondary-content: oklch(20% 0.02 250);
   --color-accent: oklch(72% 0.08 160);
   --color-accent-content: oklch(20% 0.02 160);
   --color-neutral: oklch(32% 0.012 265);
@@ -80,3 +84,31 @@
 }
 
 @custom-variant dark (&:where([data-theme="ink"], [data-theme="ink"] *));
+
+/*
+ * Muted text is a role, not an alpha value.
+ *
+ * Components used to dim metadata with `opacity-40/50/60`, which composites
+ * against whatever sits behind the text and drifts between the paper and ink
+ * themes. These tokens mix the theme's own foreground into its surface, so the
+ * hierarchy is identical in both themes and every step still clears AA for
+ * small text (`muted` about 6:1, `subtle` about 4.6:1 on paper). `faint` is
+ * decorative only and never carries information.
+ */
+@theme inline {
+  --color-muted: color-mix(
+    in oklch,
+    var(--color-base-content) 70%,
+    var(--color-base-100)
+  );
+  --color-subtle: color-mix(
+    in oklch,
+    var(--color-base-content) 61%,
+    var(--color-base-100)
+  );
+  --color-faint: color-mix(
+    in oklch,
+    var(--color-base-content) 42%,
+    var(--color-base-100)
+  );
+}
