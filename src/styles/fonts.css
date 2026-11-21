@@ -4,12 +4,47 @@
 @import "lxgw-wenkai-webfont/lxgwwenkai-regular.css";
 @import "lxgw-wenkai-webfont/lxgwwenkai-bold.css";
 
+/**
+ * Metric-matched stand-in for LXGW WenKai.
+ *
+ * WenKai is delivered as 194 unicode-range subsets *per weight*, which is what
+ * makes a full CJK face usable at all — the browser only fetches the subsets a
+ * page's characters fall into. That is also why it cannot go through
+ * `next/font/local`: that loader emits one `@font-face` per family and has no
+ * way to express `unicode-range`, so it would either ship one enormous file or
+ * lose the subsetting.
+ *
+ * What is left to fix is the swap itself: the system CJK font is a different
+ * shape and a different height, so every paragraph moves when WenKai arrives.
+ * These overrides are WenKai's own `hhea` metrics (ascent 928, descent -256,
+ * line gap 0, `unitsPerEm` 1000), so the stand-in occupies the same box and the
+ * swap is positionally invisible.
+ *
+ * `size-adjust` stays at 100%: both faces are full-width CJK with 1em advances,
+ * so the outlines already match. Latin text never reaches this family — Inter is
+ * first in the stack and covers it.
+ */
+@font-face {
+  font-family: "LXGW WenKai Fallback";
+  src:
+    local("Kaiti SC"), local("STKaiti"), local("KaiTi"), local("Songti SC"),
+    local("Noto Serif CJK SC"), local("Source Han Serif SC"),
+    local("Noto Serif JP"), local("Hiragino Mincho ProN"),
+    local("Microsoft YaHei");
+  size-adjust: 100%;
+  ascent-override: 92.8%;
+  descent-override: 25.6%;
+  line-gap-override: 0%;
+  font-display: swap;
+}
+
 @theme inline {
   --font-sans:
-    "Inter Variable", "LXGW WenKai", "Noto Sans JP", "Hiragino Sans",
-    "Microsoft YaHei", system-ui, sans-serif;
+    "Inter Variable", "LXGW WenKai", "LXGW WenKai Fallback", "Noto Sans JP",
+    "Hiragino Sans", "Microsoft YaHei", system-ui, sans-serif;
   --font-serif:
-    "LXGW WenKai", "Noto Serif JP", "Hiragino Mincho ProN", "Songti SC", serif;
+    "LXGW WenKai", "LXGW WenKai Fallback", "Noto Serif JP",
+    "Hiragino Mincho ProN", "Songti SC", serif;
   --font-mono:
     "JetBrains Mono Variable", ui-monospace, "SFMono-Regular", menlo, monospace;
 }
@@ -17,7 +52,6 @@
 html {
   font-family: var(--font-sans);
   font-optical-sizing: auto;
-  text-rendering: optimizelegibility;
   text-size-adjust: 100%;
 }
 
