@@ -24,6 +24,20 @@ const MONTH_LABEL = new Intl.DateTimeFormat(currentHtmlLang, {
   timeZone: "UTC",
 });
 
+/** Full date for a day's accessible name, e.g. "2026年11月15日". */
+const DAY_LABEL = new Intl.DateTimeFormat(currentHtmlLang, {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  timeZone: "UTC",
+});
+
+/** `dateKey` is `YYYY-MM-DD`; UTC keeps the label on the same calendar day. */
+function dayLabel(dateKey: string): string {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  return DAY_LABEL.format(new Date(Date.UTC(year, month - 1, day)));
+}
+
 const pad = (value: number) => String(value).padStart(2, "0");
 
 /** Local calendar day as `YYYY-MM-DD`, in the visitor's own timezone. */
@@ -142,6 +156,11 @@ export function CalendarWidget({
           const hasPosts = Boolean(postsByDate[cell.dateKey]?.length);
           const isToday = today === cell.dateKey;
           const isSelected = selected === cell.dateKey;
+          const count = postsByDate[cell.dateKey]?.length ?? 0;
+          // Days with nothing on them stay clickable but leave the tab order:
+          // a bare digit is not a useful tab stop, and 30 of them per page made
+          // the keyboard unobtainable before the content.
+          const reachable = hasPosts || isToday || isSelected;
 
           return (
             <button
@@ -150,7 +169,17 @@ export function CalendarWidget({
               data-has-posts={hasPosts || undefined}
               data-today={isToday || undefined}
               data-selected={isSelected || undefined}
+              aria-label={
+                count > 0
+                  ? t("calendar.dayWithPosts", {
+                      date: dayLabel(cell.dateKey),
+                      count,
+                    })
+                  : t("calendar.dayLabel", { date: dayLabel(cell.dateKey) })
+              }
+              aria-pressed={isSelected}
               aria-current={isToday ? "date" : undefined}
+              tabIndex={reachable ? 0 : -1}
               onClick={() =>
                 setSelected((current) =>
                   current === cell.dateKey ? null : cell.dateKey,
@@ -171,25 +200,29 @@ export function CalendarWidget({
       </div>
 
       <div className="mt-3 border-t border-base-300 pt-2 text-sm">
-        {selected ? (
-          selectedPosts.length > 0 ? (
-            <ul className="space-y-1">
-              {selectedPosts.map((post) => (
-                <li key={post.href}>
-                  <Link
-                    href={post.href}
-                    transitionTypes={["nav-forward"]}
-                    className="block truncate hover:text-primary"
-                  >
-                    {post.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-xs opacity-50">{t("calendar.noPosts")}</p>
-          )
-        ) : null}
+        {/* Announced when the selection changes, so the result of clicking a
+            day is not a visual-only update. */}
+        <div aria-live="polite">
+          {selected ? (
+            selectedPosts.length > 0 ? (
+              <ul className="space-y-1">
+                {selectedPosts.map((post) => (
+                  <li key={post.href}>
+                    <Link
+                      href={post.href}
+                      transitionTypes={["nav-forward"]}
+                      className="block truncate hover:text-primary"
+                    >
+                      {post.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-xs opacity-50">{t("calendar.noPosts")}</p>
+            )
+          ) : null}
+        </div>
         <button
           type="button"
           className="btn btn-ghost btn-xs mt-1 w-full"

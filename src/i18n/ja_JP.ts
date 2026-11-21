@@ -30,6 +30,8 @@ export const ja_JP: Dictionary = {
 
   "list.prevPage": "前のページ",
   "list.nextPage": "次のページ",
+  "list.pageTitle": "{page} ページ目",
+  "list.pageDescription": "すべての記事の {page} ページ目、新しい順。",
 
   "archive.title": "アーカイブ",
   "archive.description": "すべての記事を新しい順に。",
@@ -95,6 +97,8 @@ export const ja_JP: Dictionary = {
   "calendar.nextMonth": "次の月",
   "calendar.today": "今日に戻る",
   "calendar.noPosts": "この日の記事はありません",
+  "calendar.dayLabel": "{date}",
+  "calendar.dayWithPosts": "{date}、{count} 件の記事",
 
   "sidebar.primary": "サイドバー",
   "sidebar.secondary": "補助サイドバー",

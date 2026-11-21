@@ -28,6 +28,8 @@ export const en = {
 
   "list.prevPage": "Previous page",
   "list.nextPage": "Next page",
+  "list.pageTitle": "Page {page}",
+  "list.pageDescription": "Page {page} of every post, newest first.",
 
   "archive.title": "Archive",
   "archive.description": "Every post, newest first.",
@@ -93,6 +95,8 @@ export const en = {
   "calendar.nextMonth": "Next month",
   "calendar.today": "Back to today",
   "calendar.noPosts": "No posts this day",
+  "calendar.dayLabel": "{date}",
+  "calendar.dayWithPosts": "{date}, {count} posts",
 
   "sidebar.primary": "Sidebar",
   "sidebar.secondary": "Supplementary sidebar",

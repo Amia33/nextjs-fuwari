@@ -30,6 +30,8 @@ export const zh_CN: Dictionary = {
 
   "list.prevPage": "上一页",
   "list.nextPage": "下一页",
+  "list.pageTitle": "第 {page} 页",
+  "list.pageDescription": "全部文章的第 {page} 页，由新到旧。",
 
   "archive.title": "归档",
   "archive.description": "全部文章，由新到旧。",
@@ -95,6 +97,8 @@ export const zh_CN: Dictionary = {
   "calendar.nextMonth": "下个月",
   "calendar.today": "回到今天",
   "calendar.noPosts": "这一天没有文章",
+  "calendar.dayLabel": "{date}",
+  "calendar.dayWithPosts": "{date}，{count} 篇文章",
 
   "sidebar.primary": "侧边栏",
   "sidebar.secondary": "辅助侧边栏",
