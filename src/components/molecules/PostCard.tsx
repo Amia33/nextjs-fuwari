@@ -28,14 +28,14 @@ export function PostCard({ post, index }: { post: PublicPost; index: number }) {
                 style={{ viewTransitionName: `cover-${post._meta.path}` }}
               />
             ) : (
-              <div className="flex h-full items-center justify-center text-xs opacity-40">
+              <div className="flex h-full items-center justify-center text-xs text-subtle">
                 {post.category ?? "—"}
               </div>
             )}
           </div>
 
           <div className="flex min-w-0 flex-1 flex-col py-3 sm:py-0">
-            <h2 className="line-clamp-2 text-sm font-medium leading-snug sm:text-base">
+            <h2 className="line-clamp-2 text-base font-semibold leading-snug sm:text-lg">
               {post.pinned ? (
                 <span className="badge badge-primary badge-xs mr-2 align-middle">
                   {t("post.pinned")}
@@ -46,18 +46,18 @@ export function PostCard({ post, index }: { post: PublicPost; index: number }) {
 
             <time
               dateTime={post.published.toISOString()}
-              className="mt-1.5 text-xs opacity-60 sm:mt-2"
+              className="mt-1.5 text-xs tabular-nums text-subtle sm:mt-2"
             >
               {formatDate(post.published)}
             </time>
 
             {post.description ? (
-              <p className="mt-2 hidden line-clamp-2 text-sm opacity-70 sm:block">
+              <p className="mt-2 hidden line-clamp-2 text-sm text-muted sm:block">
                 {post.description}
               </p>
             ) : null}
 
-            <div className="mt-auto hidden items-center gap-3 pt-3 text-xs opacity-50 sm:flex">
+            <div className="mt-auto hidden items-center gap-3 pt-3 text-xs text-subtle sm:flex">
               {post.category ? <span>{post.category}</span> : null}
               <span>{t("post.readingTime", { minutes: post.minutes })}</span>
             </div>

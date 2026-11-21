@@ -10,6 +10,7 @@ export const en = {
   "nav.about": "About",
   "nav.theme": "Toggle theme",
   "nav.menu": "Menu",
+  "nav.skipToContent": "Skip to content",
 
   "post.published": "Published",
   "post.updated": "Updated",
@@ -28,6 +29,7 @@ export const en = {
 
   "list.prevPage": "Previous page",
   "list.nextPage": "Next page",
+  "list.pagination": "Pagination",
   "list.pageTitle": "Page {page}",
   "list.pageDescription": "Page {page} of every post, newest first.",
 
@@ -38,6 +40,7 @@ export const en = {
   "archive.filteredByTag": "Filtered by tag",
   "archive.filteredByCategory": "Filtered by category",
   "archive.clear": "Clear filter",
+  "archive.empty": "No posts match this filter.",
 
   "categories.title": "Categories",
   "categories.description": "Posts grouped by category.",
@@ -69,7 +72,8 @@ export const en = {
   "gate.title": "This content is protected",
   "gate.description": "Enter the password to read it.",
   "gate.hint": "Hint",
-  "gate.placeholder": "Password",
+  "gate.label": "Password",
+  "gate.placeholder": "Enter password",
   "gate.submit": "Unlock",
   "gate.submitting": "Checking…",
   "gate.wrong": "Incorrect password.",

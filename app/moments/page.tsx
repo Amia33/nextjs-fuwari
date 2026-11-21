@@ -24,6 +24,14 @@ export const instant = false;
 async function MomentBodies() {
   const moments = getMoments();
 
+  if (moments.length === 0) {
+    return (
+      <p className="py-12 text-center text-sm text-subtle">
+        {t("moments.empty")}
+      </p>
+    );
+  }
+
   const unlocked = await Promise.all(
     moments.map((moment) =>
       moment.passwordProtected
@@ -54,7 +62,7 @@ export default function MomentsPage() {
     >
       <Suspense
         fallback={
-          <p className="py-8 text-sm opacity-60">{t("common.loading")}</p>
+          <p className="py-8 text-sm text-subtle">{t("common.loading")}</p>
         }
       >
         <MomentBodies />

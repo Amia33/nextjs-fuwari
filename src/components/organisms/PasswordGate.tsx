@@ -6,6 +6,8 @@ import { t } from "@/src/i18n";
 import { unlockContent } from "@/src/server/actions/unlock-content";
 import type { GateKind } from "@/src/server/auth/session";
 
+import { IconLock } from "../atoms/Icons";
+
 export function PasswordGate({
   kind,
   id,
@@ -42,43 +44,52 @@ export function PasswordGate({
 
   return (
     <div className="rounded-box border border-base-300 bg-base-200 p-6">
-      <h2 className="text-lg font-medium">
-        <span aria-hidden="true">🔒 </span>
+      <h2 className="flex items-center gap-2 text-lg font-medium">
+        <IconLock className="size-4" />
         {t("gate.title")}
       </h2>
-      <p className="mt-1 text-sm opacity-70">{t("gate.description")}</p>
+      <p className="mt-1 text-sm text-muted">{t("gate.description")}</p>
 
       {hint ? (
-        <p className="mt-3 text-sm opacity-70">
+        <p className="mt-3 text-sm text-muted">
           {t("gate.hint")}：<span className="font-medium">{hint}</span>
         </p>
       ) : null}
 
       <form
         onSubmit={onSubmit}
-        className="mt-4 flex flex-col gap-3 sm:flex-row"
+        className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end"
       >
-        <input
-          type="password"
-          name="password"
-          autoComplete="current-password"
-          required
-          minLength={1}
-          maxLength={256}
-          value={password}
-          onChange={(event) => setPassword(event.target.value.slice(0, 256))}
-          placeholder={t("gate.placeholder")}
-          className="input input-bordered w-full sm:max-w-xs"
-          aria-label={t("gate.placeholder")}
-          aria-invalid={error ? true : undefined}
-        />
+        <div className="w-full sm:max-w-xs">
+          <label
+            htmlFor="gate-password"
+            className="mb-1 block text-sm text-muted"
+          >
+            {t("gate.label")}
+          </label>
+          <input
+            id="gate-password"
+            type="password"
+            name="password"
+            autoComplete="current-password"
+            required
+            minLength={1}
+            maxLength={256}
+            value={password}
+            onChange={(event) => setPassword(event.target.value.slice(0, 256))}
+            placeholder={t("gate.placeholder")}
+            className="input input-bordered w-full text-base"
+            aria-describedby={error ? "gate-error" : undefined}
+            aria-invalid={error ? true : undefined}
+          />
+        </div>
         <button type="submit" className="btn btn-primary" disabled={pending}>
           {pending ? t("gate.submitting") : t("gate.submit")}
         </button>
       </form>
 
       {error ? (
-        <p role="alert" className="mt-3 text-sm text-error">
+        <p id="gate-error" role="alert" className="mt-3 text-sm text-error">
           {error}
         </p>
       ) : null}

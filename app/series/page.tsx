@@ -28,7 +28,7 @@ export default function SeriesPage() {
           >
             <summary className="collapse-title cursor-pointer font-medium">
               {group.name}
-              <span className="ml-2 text-xs opacity-50">
+              <span className="ml-2 text-xs text-subtle">
                 {t("series.posts", { count: group.posts.length })}
               </span>
             </summary>
@@ -45,7 +45,7 @@ export default function SeriesPage() {
                     >
                       <span
                         aria-hidden="true"
-                        className="text-xs font-medium tabular-nums opacity-40"
+                        className="text-xs font-medium tabular-nums text-subtle"
                       >
                         {String(postIndex + 1).padStart(2, "0")}
                       </span>

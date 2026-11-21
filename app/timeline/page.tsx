@@ -23,12 +23,12 @@ export default function TimelinePage() {
               aria-hidden="true"
               className="absolute -start-[5px] mt-1.5 size-2.5 rounded-full bg-primary"
             />
-            <time className="text-xs tabular-nums opacity-50">
+            <time className="text-xs tabular-nums text-subtle">
               {entry.date}
             </time>
             <h2 className="mt-1 font-medium">{entry.title}</h2>
             {entry.description ? (
-              <p className="mt-1 text-sm opacity-70">{entry.description}</p>
+              <p className="mt-1 text-sm text-muted">{entry.description}</p>
             ) : null}
           </li>
         ))}

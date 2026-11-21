@@ -7,7 +7,7 @@ import { themeScript } from "@/src/components/organisms/ThemeToggle";
 import { TopAppBar } from "@/src/components/organisms/TopAppBar";
 import { analyticsConfig } from "@/src/config/analytics";
 import { siteConfig } from "@/src/config/site";
-import { currentHtmlLang } from "@/src/i18n";
+import { currentHtmlLang, t } from "@/src/i18n";
 
 import "./globals.css";
 
@@ -43,6 +43,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="flex min-h-svh flex-col bg-base-100 text-base-content antialiased">
+        <a
+          href="#content"
+          className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:start-4 focus-visible:top-4 focus-visible:z-[60] focus-visible:rounded-box focus-visible:border focus-visible:border-base-300 focus-visible:bg-base-100 focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:text-base-content"
+        >
+          {t("nav.skipToContent")}
+        </a>
         <div
           id="scroll-sentinel"
           aria-hidden="true"

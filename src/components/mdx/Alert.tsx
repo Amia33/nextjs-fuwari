@@ -1,11 +1,15 @@
-import type { ReactNode } from "react";
+import type { ComponentType, ReactNode, SVGProps } from "react";
 
-const ICONS: Record<string, string> = {
-  note: "ℹ",
-  tip: "✦",
-  important: "❗",
-  warning: "⚠",
-  caution: "⚠",
+import { IconAlert, IconInfo, IconOctagon, IconSpark } from "../atoms/Icons";
+
+type AlertIcon = ComponentType<SVGProps<SVGSVGElement>>;
+
+const ICONS: Record<string, AlertIcon> = {
+  note: IconInfo,
+  tip: IconSpark,
+  important: IconInfo,
+  warning: IconAlert,
+  caution: IconOctagon,
 };
 
 const CLASSES: Record<string, string> = {
@@ -27,14 +31,14 @@ export function Alert({
   title?: string;
   children: ReactNode;
 }) {
+  const Glyph = ICONS[type] ?? IconInfo;
+
   return (
     <div
       role="alert"
       className={`not-prose alert alert-soft ${CLASSES[type] ?? "alert-info"} my-6 items-start`}
     >
-      <span aria-hidden="true" className="mt-0.5 text-base">
-        {ICONS[type] ?? "ℹ"}
-      </span>
+      <Glyph className="mt-0.5 size-5 shrink-0" />
       <div className="min-w-0">
         {title ? <p className="font-semibold">{title}</p> : null}
         <div className="text-sm leading-relaxed [&>p]:m-0">{children}</div>

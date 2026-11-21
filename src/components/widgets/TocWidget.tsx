@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import type { Heading } from "@/src/content/headings";
 import { t } from "@/src/i18n";
 
+import { WidgetLayout } from "./WidgetLayout";
+
 /**
  * Where a heading becomes the active one, as a fraction of the viewport height.
  *
@@ -87,10 +89,7 @@ export function TocWidget({ headings }: { headings: Heading[] }) {
   }, [headings]);
 
   return (
-    <div className="rounded-box border border-base-300 bg-base-100 p-4">
-      <h2 className="mb-2 text-xs font-medium uppercase tracking-wider opacity-50">
-        {t("post.toc")}
-      </h2>
+    <WidgetLayout name={t("post.toc")}>
       <nav aria-label={t("post.toc")}>
         <ul className="max-h-[calc(100dvh-16rem)] space-y-0.5 overflow-y-auto text-sm">
           {headings.map((heading) => {
@@ -109,7 +108,7 @@ export function TocWidget({ headings }: { headings: Heading[] }) {
                   className={`block truncate rounded-s border-s-2 py-0.5 ps-2 transition-colors ${
                     active
                       ? "border-primary font-medium text-primary"
-                      : "border-transparent opacity-60 hover:text-primary hover:opacity-100"
+                      : "border-transparent text-subtle hover:text-primary"
                   }`}
                 >
                   {heading.text}
@@ -119,6 +118,6 @@ export function TocWidget({ headings }: { headings: Heading[] }) {
           })}
         </ul>
       </nav>
-    </div>
+    </WidgetLayout>
   );
 }

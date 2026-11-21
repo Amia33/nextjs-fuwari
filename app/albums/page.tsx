@@ -23,7 +23,7 @@ export default function AlbumsPage() {
       bannerDescription={t("albums.description")}
     >
       {albums.length === 0 ? (
-        <p className="py-12 text-center text-sm opacity-60">
+        <p className="py-12 text-center text-sm text-subtle">
           {t("albums.empty")}
         </p>
       ) : (
@@ -54,7 +54,7 @@ export default function AlbumsPage() {
                 <p className="mt-2 truncate text-sm font-medium">
                   {album.title}
                 </p>
-                <p className="text-xs opacity-50">
+                <p className="text-xs text-subtle">
                   {formatDate(album.published)} ·{" "}
                   {t("albums.photos", { count: album.photos.length })}
                 </p>

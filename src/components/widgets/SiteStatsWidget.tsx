@@ -23,22 +23,22 @@ export function SiteStatsWidget() {
       <dl className="space-y-1.5 text-sm">
         {rows.map((row) => (
           <div key={row.label} className="flex items-baseline gap-2">
-            <dt className="opacity-70">{row.label}</dt>
+            <dt className="text-muted">{row.label}</dt>
             <span
               aria-hidden="true"
               className="min-w-0 flex-1 border-b border-dotted border-base-300"
             />
-            <dd className="tabular-nums opacity-60">{row.value}</dd>
+            <dd className="tabular-nums text-subtle">{row.value}</dd>
           </div>
         ))}
         {stats.lastActivity ? (
           <div className="flex items-baseline gap-2">
-            <dt className="opacity-70">{t("stats.updated")}</dt>
+            <dt className="text-muted">{t("stats.updated")}</dt>
             <span
               aria-hidden="true"
               className="min-w-0 flex-1 border-b border-dotted border-base-300"
             />
-            <dd className="tabular-nums opacity-60">
+            <dd className="tabular-nums text-subtle">
               {formatDate(stats.lastActivity)}
             </dd>
           </div>

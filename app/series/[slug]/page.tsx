@@ -68,7 +68,7 @@ export default async function SeriesDetail({ params }: Props) {
               >
                 <span
                   aria-hidden="true"
-                  className="text-sm font-medium tabular-nums opacity-40"
+                  className="text-sm font-medium tabular-nums text-subtle"
                 >
                   {String(index + 1).padStart(2, "0")}
                 </span>

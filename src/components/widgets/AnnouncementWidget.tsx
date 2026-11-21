@@ -6,6 +6,7 @@ import { useSyncExternalStore } from "react";
 import { announcementConfig } from "@/src/config/announcement";
 import { t } from "@/src/i18n";
 
+import { IconClose } from "../atoms/Icons";
 import { WidgetLayout } from "./WidgetLayout";
 
 const STORAGE_KEY = "announcement-dismissed";
@@ -46,7 +47,7 @@ export function AnnouncementWidget() {
 
   return (
     <WidgetLayout name={title || t("announcement.title")}>
-      <p className="whitespace-pre-line text-sm leading-relaxed opacity-80">
+      <p className="whitespace-pre-line text-sm leading-relaxed text-muted">
         {content}
       </p>
 
@@ -56,7 +57,7 @@ export function AnnouncementWidget() {
             <Link
               href={link.href}
               transitionTypes={["nav-forward"]}
-              className="btn btn-xs"
+              className="btn btn-sm h-11 min-h-11 sm:h-8 sm:min-h-8"
               {...(link.external
                 ? { target: "_blank", rel: "noopener noreferrer" }
                 : {})}
@@ -71,10 +72,12 @@ export function AnnouncementWidget() {
             <button
               type="button"
               onClick={dismiss}
-              className="btn btn-ghost btn-xs btn-square"
+              className="btn btn-ghost btn-sm btn-square size-11 sm:size-8"
               aria-label={t("announcement.close")}
             >
-              <span aria-hidden="true">✕</span>
+              <span aria-hidden="true">
+                <IconClose className="size-4" />
+              </span>
             </button>
           ) : null}
         </div>

@@ -29,7 +29,7 @@ export default function TagsPage() {
               className="badge badge-lg badge-ghost gap-2"
             >
               {item.name}
-              <span className="opacity-40">{item.count}</span>
+              <span className="text-subtle">{item.count}</span>
             </Link>
           </li>
         ))}
