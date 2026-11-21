@@ -39,10 +39,13 @@ export function ArchiveBrowser({ posts }: { posts: ArchivePost[] }) {
     <>
       {label ? (
         <div className="mb-6 flex flex-wrap items-center gap-3">
-          <Link href="/archive" className="btn btn-ghost btn-xs">
+          <Link
+            href="/archive"
+            className="btn btn-ghost btn-sm h-11 min-h-11 sm:h-8 sm:min-h-8"
+          >
             {t("archive.clear")}
           </Link>
-          <span className="text-sm opacity-70">{label}</span>
+          <span className="text-sm text-muted">{label}</span>
         </div>
       ) : null}
 

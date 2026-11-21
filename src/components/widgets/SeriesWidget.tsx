@@ -26,7 +26,9 @@ export function SeriesWidget({
             className="flex justify-between rounded px-1 py-0.5 hover:bg-base-200"
           >
             <span className="truncate">{item.name}</span>
-            <span className="tabular-nums opacity-40">{item.posts.length}</span>
+            <span className="tabular-nums text-subtle">
+              {item.posts.length}
+            </span>
           </Link>
         </li>
       ))}
@@ -38,7 +40,7 @@ export function SeriesWidget({
       {list(visible)}
       {overflow.length > 0 ? (
         <details className="mt-1">
-          <summary className="cursor-pointer rounded px-1 py-0.5 text-xs opacity-60 hover:bg-base-200">
+          <summary className="cursor-pointer rounded px-1 py-0.5 text-xs text-subtle hover:bg-base-200">
             +{overflow.length}
           </summary>
           <div className="mt-1">{list(overflow)}</div>

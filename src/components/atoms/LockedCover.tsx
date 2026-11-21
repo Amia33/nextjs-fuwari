@@ -1,3 +1,5 @@
+import { IconLock } from "./Icons";
+
 /**
  * Stands in for a protected item's cover image while it is locked.
  *
@@ -8,8 +10,8 @@
  */
 export function LockedCover() {
   return (
-    <div className="flex h-full w-full items-center justify-center text-xs opacity-40">
-      <span aria-hidden="true">🔒</span>
+    <div className="flex h-full w-full items-center justify-center text-faint">
+      <IconLock className="size-5" />
     </div>
   );
 }

@@ -20,7 +20,7 @@ export function VideoPlayerBlock({
         </VideoSkin>
       </VideoPlayer>
       {title ? (
-        <figcaption className="mt-2 text-center text-sm opacity-60">
+        <figcaption className="mt-2 text-center text-sm text-subtle">
           {title}
         </figcaption>
       ) : null}

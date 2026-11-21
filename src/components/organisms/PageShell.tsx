@@ -69,6 +69,7 @@ export function PageShell({
           <div className="min-w-0">
             <main
               id="content"
+              tabIndex={-1}
               className={wide ? "" : "mx-auto w-full max-w-4xl"}
             >
               {children}

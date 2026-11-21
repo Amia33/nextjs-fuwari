@@ -12,6 +12,7 @@ import {
 import { navConfig } from "@/src/config/nav";
 import { t } from "@/src/i18n";
 
+import { IconMenu } from "../atoms/Icons";
 import { Logo } from "./Logo";
 import { NavLinks, NavLinksFallback } from "./NavLinks";
 import { ThemeToggle } from "./ThemeToggle";
@@ -84,12 +85,14 @@ export function TopAppBar() {
           <ThemeToggle />
           <button
             type="button"
-            className="btn btn-ghost btn-sm btn-square md:hidden"
+            className="btn btn-ghost btn-sm btn-square size-11 md:hidden"
             aria-expanded={open}
             aria-label={t("nav.menu")}
             onClick={() => setOpen((value) => !value)}
           >
-            <span aria-hidden="true">☰</span>
+            <span aria-hidden="true">
+              <IconMenu className="size-5" />
+            </span>
           </button>
         </div>
       </nav>
@@ -100,7 +103,7 @@ export function TopAppBar() {
             <li key={item.href}>
               <Link
                 href={item.href}
-                className="block py-2 text-sm"
+                className="block py-3 text-sm"
                 transitionTypes={["nav-forward"]}
                 onClick={close}
               >

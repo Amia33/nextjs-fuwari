@@ -37,7 +37,7 @@ export function TagsWidget({ limit = 12 }: { limit?: number }) {
         <Link
           href="/tags"
           transitionTypes={["nav-forward"]}
-          className="mt-2 inline-block text-xs opacity-60 hover:text-primary hover:opacity-100"
+          className="mt-2 inline-block text-xs text-subtle hover:text-primary"
         >
           {t("tags.viewAll", { count: tags.length })}
         </Link>

@@ -53,19 +53,19 @@ export default async function AlbumDetail({ params }: Props) {
           <Link
             href="/albums"
             transitionTypes={["nav-back"]}
-            className="text-sm opacity-60 hover:opacity-100"
+            className="text-sm text-subtle hover:text-base-content"
           >
             ← {t("albums.title")}
           </Link>
         </div>
 
         {album.description ? (
-          <p className="mb-6 text-sm opacity-70">{album.description}</p>
+          <p className="mb-6 text-sm text-muted">{album.description}</p>
         ) : null}
 
         <Suspense
           fallback={
-            <p className="py-8 text-sm opacity-60">{t("common.loading")}</p>
+            <p className="py-8 text-sm text-subtle">{t("common.loading")}</p>
           }
         >
           <ProtectedBody

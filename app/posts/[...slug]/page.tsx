@@ -108,7 +108,7 @@ export default async function PostPage({ params }: Props) {
     >
       <article className="pb-4">
         <header className="mb-8">
-          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm opacity-70">
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
             <span>{t("post.published")}</span>
             <time dateTime={formatDateIso(post.published)}>
               {formatDate(post.published)}
@@ -164,7 +164,7 @@ export default async function PostPage({ params }: Props) {
 
         <Suspense
           fallback={
-            <p className="py-8 text-sm opacity-60">{t("common.loading")}</p>
+            <p className="py-8 text-sm text-subtle">{t("common.loading")}</p>
           }
         >
           <ProtectedBody kind="post" id={post._meta.path} code={post.mdx} />

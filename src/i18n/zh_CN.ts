@@ -12,6 +12,7 @@ export const zh_CN: Dictionary = {
   "nav.about": "关于",
   "nav.theme": "切换主题",
   "nav.menu": "菜单",
+  "nav.skipToContent": "跳到正文",
 
   "post.published": "发布于",
   "post.updated": "更新于",
@@ -30,6 +31,7 @@ export const zh_CN: Dictionary = {
 
   "list.prevPage": "上一页",
   "list.nextPage": "下一页",
+  "list.pagination": "分页",
   "list.pageTitle": "第 {page} 页",
   "list.pageDescription": "全部文章的第 {page} 页，由新到旧。",
 
@@ -40,6 +42,7 @@ export const zh_CN: Dictionary = {
   "archive.filteredByTag": "按标签筛选",
   "archive.filteredByCategory": "按分类筛选",
   "archive.clear": "清除筛选",
+  "archive.empty": "没有符合条件的文章。",
 
   "categories.title": "分类",
   "categories.description": "按分类浏览文章。",
@@ -71,7 +74,8 @@ export const zh_CN: Dictionary = {
   "gate.title": "此内容已加密",
   "gate.description": "请输入密码后阅读。",
   "gate.hint": "提示",
-  "gate.placeholder": "密码",
+  "gate.label": "密码",
+  "gate.placeholder": "输入密码",
   "gate.submit": "解锁",
   "gate.submitting": "验证中…",
   "gate.wrong": "密码不正确。",

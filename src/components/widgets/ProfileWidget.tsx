@@ -17,7 +17,7 @@ export function ProfileWidget() {
         />
         <div className="min-w-0">
           <p className="truncate font-medium">{profileConfig.name}</p>
-          <p className="truncate text-xs opacity-60">{profileConfig.bio}</p>
+          <p className="truncate text-xs text-subtle">{profileConfig.bio}</p>
         </div>
       </div>
     </WidgetLayout>

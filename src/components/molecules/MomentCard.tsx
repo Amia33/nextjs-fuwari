@@ -21,7 +21,7 @@ export function MomentCard({
 
   return (
     <article className="rounded-box border border-base-300 bg-base-100 p-5">
-      <header className="mb-3 flex items-center justify-between text-xs opacity-60">
+      <header className="mb-3 flex items-center justify-between text-xs text-subtle">
         <time dateTime={moment.published.toISOString()}>
           {formatDate(moment.published)}
         </time>
@@ -81,7 +81,7 @@ export function MomentCard({
           ) : null}
 
           {moment.mood ? (
-            <p className="mt-3 text-xs opacity-50">{moment.mood}</p>
+            <p className="mt-3 text-xs text-subtle">{moment.mood}</p>
           ) : null}
         </>
       )}

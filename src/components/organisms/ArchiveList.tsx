@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { t } from "@/src/i18n";
+
 /**
  * The few fields the archive list renders. Deliberately narrower than
  * `PublicPost`: the archive browser is a Client Component, and passing whole
@@ -15,6 +17,14 @@ export type ArchivePost = {
 };
 
 export function ArchiveList({ posts }: { posts: ArchivePost[] }) {
+  if (posts.length === 0) {
+    return (
+      <p className="py-12 text-center text-sm text-subtle">
+        {t("archive.empty")}
+      </p>
+    );
+  }
+
   const byYear = new Map<number, ArchivePost[]>();
   for (const post of posts) {
     const year = post.published.getUTCFullYear();
@@ -29,7 +39,7 @@ export function ArchiveList({ posts }: { posts: ArchivePost[] }) {
     <div className="space-y-10">
       {years.map((year) => (
         <section key={year}>
-          <h2 className="mb-3 text-lg font-semibold tabular-nums opacity-80">
+          <h2 className="mb-3 text-lg font-semibold tabular-nums text-muted">
             {year}
           </h2>
           <ul className="space-y-3">
@@ -37,7 +47,7 @@ export function ArchiveList({ posts }: { posts: ArchivePost[] }) {
               <li key={post.path} className="flex items-baseline gap-3">
                 <time
                   dateTime={post.published.toISOString()}
-                  className="w-14 shrink-0 text-xs tabular-nums opacity-50"
+                  className="w-14 shrink-0 text-xs tabular-nums text-subtle"
                 >
                   {post.published.toISOString().slice(5, 10).replace("-", "/")}
                 </time>
@@ -49,7 +59,7 @@ export function ArchiveList({ posts }: { posts: ArchivePost[] }) {
                   {post.title}
                 </Link>
                 {post.category ? (
-                  <span className="hidden shrink-0 text-xs opacity-40 sm:inline">
+                  <span className="hidden shrink-0 text-xs text-subtle sm:inline">
                     {post.category}
                   </span>
                 ) : null}

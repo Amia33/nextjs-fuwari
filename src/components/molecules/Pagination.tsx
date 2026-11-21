@@ -16,26 +16,29 @@ export function Pagination({
   const href = (target: number) =>
     target === 1 ? basePath || "/" : `${basePath}/page/${target}`;
 
+  // Phone-sized tap targets; the compact size returns at `sm`.
+  const control = "btn btn-ghost btn-sm h-11 min-h-11 sm:h-8 sm:min-h-8";
+
   return (
     <nav
       className="mt-10 flex items-center justify-center gap-2"
-      aria-label="Pagination"
+      aria-label={t("list.pagination")}
     >
       {page > 1 ? (
         <Link
           href={href(page - 1)}
           transitionTypes={["nav-back"]}
-          className="btn btn-ghost btn-sm"
+          className={control}
         >
           ← {t("list.prevPage")}
         </Link>
       ) : (
-        <span className="btn btn-ghost btn-sm btn-disabled">
+        <span className={`${control} btn-disabled`}>
           ← {t("list.prevPage")}
         </span>
       )}
 
-      <span className="px-2 text-sm opacity-60">
+      <span className="px-2 text-sm tabular-nums text-subtle">
         {page} / {totalPages}
       </span>
 
@@ -43,12 +46,12 @@ export function Pagination({
         <Link
           href={href(page + 1)}
           transitionTypes={["nav-forward"]}
-          className="btn btn-ghost btn-sm"
+          className={control}
         >
           {t("list.nextPage")} →
         </Link>
       ) : (
-        <span className="btn btn-ghost btn-sm btn-disabled">
+        <span className={`${control} btn-disabled`}>
           {t("list.nextPage")} →
         </span>
       )}

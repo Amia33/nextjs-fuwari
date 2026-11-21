@@ -8,11 +8,11 @@ import { t } from "@/src/i18n";
  */
 export function Footer() {
   return (
-    <footer className="mt-16 border-t border-base-300 py-8 text-center text-sm opacity-70">
+    <footer className="mt-16 border-t border-base-300 py-8 text-center text-sm text-muted">
       <p>
         © {siteConfig.title} · {profileConfig.name}
       </p>
-      <p className="mt-2 text-xs">{t("footer.poweredBy")}</p>
+      <p className="mt-2 text-xs text-subtle">{t("footer.poweredBy")}</p>
     </footer>
   );
 }

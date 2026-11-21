@@ -6,6 +6,7 @@ import { useMemo, useState, useSyncExternalStore } from "react";
 import { currentHtmlLang, t } from "@/src/i18n";
 import type { CalendarPost } from "@/src/content/calendar";
 
+import { IconChevronLeft, IconChevronRight } from "../atoms/Icons";
 import { WidgetLayout } from "./WidgetLayout";
 
 // Weekday headers follow the site locale, Monday-first like the upstream.
@@ -120,30 +121,34 @@ export function CalendarWidget({
       <div className="mb-2 flex items-center justify-between">
         <button
           type="button"
-          className="btn btn-ghost btn-xs btn-square"
+          className="btn btn-ghost btn-sm btn-square size-11 sm:size-8"
           aria-label={t("calendar.prevMonth")}
           onClick={() => {
             setSelected(null);
             setMonth(shiftMonth(displayMonth, -1));
           }}
         >
-          <span aria-hidden="true">‹</span>
+          <span aria-hidden="true">
+            <IconChevronLeft className="size-4" />
+          </span>
         </button>
         <p className="text-sm font-medium tabular-nums">{monthLabel}</p>
         <button
           type="button"
-          className="btn btn-ghost btn-xs btn-square"
+          className="btn btn-ghost btn-sm btn-square size-11 sm:size-8"
           aria-label={t("calendar.nextMonth")}
           onClick={() => {
             setSelected(null);
             setMonth(shiftMonth(displayMonth, 1));
           }}
         >
-          <span aria-hidden="true">›</span>
+          <span aria-hidden="true">
+            <IconChevronRight className="size-4" />
+          </span>
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 text-center text-[0.6875rem] opacity-50">
+      <div className="grid grid-cols-7 gap-1 text-center text-[0.6875rem] text-subtle">
         {WEEKDAYS.map((label, index) => (
           <span key={index}>{label}</span>
         ))}
@@ -219,13 +224,13 @@ export function CalendarWidget({
                 ))}
               </ul>
             ) : (
-              <p className="text-xs opacity-50">{t("calendar.noPosts")}</p>
+              <p className="text-xs text-subtle">{t("calendar.noPosts")}</p>
             )
           ) : null}
         </div>
         <button
           type="button"
-          className="btn btn-ghost btn-xs mt-1 w-full"
+          className="btn btn-ghost btn-sm mt-1 h-11 min-h-11 w-full sm:h-8 sm:min-h-8"
           onClick={() => {
             // Resetting the override makes the grid follow the visitor's
             // current month again, with today highlighted.

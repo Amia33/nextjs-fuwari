@@ -12,6 +12,7 @@ export const ja_JP: Dictionary = {
   "nav.about": "このサイトについて",
   "nav.theme": "テーマを切り替える",
   "nav.menu": "メニュー",
+  "nav.skipToContent": "本文へスキップ",
 
   "post.published": "公開",
   "post.updated": "更新",
@@ -30,6 +31,7 @@ export const ja_JP: Dictionary = {
 
   "list.prevPage": "前のページ",
   "list.nextPage": "次のページ",
+  "list.pagination": "ページ送り",
   "list.pageTitle": "{page} ページ目",
   "list.pageDescription": "すべての記事の {page} ページ目、新しい順。",
 
@@ -40,6 +42,7 @@ export const ja_JP: Dictionary = {
   "archive.filteredByTag": "タグで絞り込み",
   "archive.filteredByCategory": "カテゴリーで絞り込み",
   "archive.clear": "絞り込みを解除",
+  "archive.empty": "条件に合う記事はありません。",
 
   "categories.title": "カテゴリー",
   "categories.description": "カテゴリーごとに記事を見る。",
@@ -71,7 +74,8 @@ export const ja_JP: Dictionary = {
   "gate.title": "この内容は保護されています",
   "gate.description": "パスワードを入力してください。",
   "gate.hint": "ヒント",
-  "gate.placeholder": "パスワード",
+  "gate.label": "パスワード",
+  "gate.placeholder": "パスワードを入力",
   "gate.submit": "解除する",
   "gate.submitting": "確認中…",
   "gate.wrong": "パスワードが違います。",

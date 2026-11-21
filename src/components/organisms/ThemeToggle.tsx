@@ -2,6 +2,10 @@
 
 import { useSyncExternalStore } from "react";
 
+import { t } from "@/src/i18n";
+
+import { IconMoon, IconSun } from "../atoms/Icons";
+
 const STORAGE_KEY = "theme";
 
 export type Theme = "paper" | "ink";
@@ -44,12 +48,16 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      className="btn btn-ghost btn-sm btn-square"
-      aria-label="Toggle theme"
+      className="btn btn-ghost btn-sm btn-square size-11 md:size-8"
+      aria-label={t("nav.theme")}
       aria-pressed={theme === "ink"}
     >
-      <span aria-hidden="true" className="text-lg leading-none">
-        {theme === "ink" ? "☾" : "☀"}
+      <span aria-hidden="true">
+        {theme === "ink" ? (
+          <IconMoon className="size-5" />
+        ) : (
+          <IconSun className="size-5" />
+        )}
       </span>
     </button>
   );

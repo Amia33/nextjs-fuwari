@@ -29,7 +29,7 @@ export default function CategoriesPage() {
               className="flex items-center justify-between py-3 hover:text-primary"
             >
               <span>{item.name}</span>
-              <span className="text-sm opacity-50">
+              <span className="text-sm text-subtle">
                 {t("categories.count", { count: item.count })}
               </span>
             </Link>
