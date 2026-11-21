@@ -51,24 +51,27 @@ export function MomentCard({
                     : "grid-cols-3"
               }`}
             >
-              {moment.images.map((src) => (
+              {moment.images.map((image) => (
                 <li
-                  key={src}
+                  key={image.src}
                   className="relative aspect-[4/3] overflow-hidden rounded-box bg-base-200"
                 >
                   <a
-                    href={src}
+                    href={image.src}
                     className="block h-full w-full"
-                    data-pswp-src={src}
+                    data-pswp-src={image.src}
                     data-pswp-width="1600"
                     data-pswp-height="1200"
                   >
                     <Image
-                      src={src}
-                      alt=""
+                      src={image.src}
+                      // A moment photo is a standalone link to the full-size
+                      // image with no adjacent text, so the frontmatter alt is
+                      // its only accessible name.
+                      alt={image.alt}
                       fill
                       sizes="(max-width: 768px) 100vw, 24rem"
-                      unoptimized={src.startsWith("/vault/")}
+                      unoptimized={image.src.startsWith("/vault/")}
                       className="object-cover"
                     />
                   </a>

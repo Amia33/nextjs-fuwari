@@ -131,7 +131,18 @@ const moments = defineCollection({
   include: "**/*.mdx",
   schema: gated({
     published: z.coerce.date(),
-    images: z.array(z.string()).default([]),
+    /**
+     * A bare path still works; the object form adds alt text, which a moment
+     * photo needs because each one is a standalone link to the full-size image.
+     */
+    images: z
+      .array(
+        z.union([
+          z.string(),
+          z.object({ src: z.string(), alt: z.string().default("") }),
+        ]),
+      )
+      .default([]),
     location: z.string().optional(),
     mood: z.string().optional(),
     content: z.string(),
@@ -139,11 +150,22 @@ const moments = defineCollection({
   transform: async (doc, ctx) => {
     const slug = doc._meta.path;
     const gated = doc.passwordProtected === true;
-    if (gated) assertNoPublishedRefs("moments", slug, doc.images);
+    const images = doc.images.map((image) =>
+      typeof image === "string" ? { src: image, alt: "" } : image,
+    );
+    if (gated)
+      assertNoPublishedRefs(
+        "moments",
+        slug,
+        images.map((i) => i.src),
+      );
 
     return {
       ...doc,
-      images: resolveRefs("moments", slug, doc.images, gated),
+      images: images.map((image) => ({
+        ...image,
+        src: resolveRefs("moments", slug, [image.src], gated)[0],
+      })),
       mdx: await compileMDX(ctx, doc, pluginsFor("moments", slug, gated)),
     };
   },
