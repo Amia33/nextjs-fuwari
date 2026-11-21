@@ -28,7 +28,7 @@ export function Banner({
   return (
     <div
       className={`relative w-full overflow-hidden ${
-        home ? "h-[100svh]" : "h-[45vh] min-h-[380px]"
+        home ? "h-[92svh] min-h-[34rem]" : "h-[45vh] min-h-[380px]"
       }`}
     >
       {/* `isolate` keeps this stacking context local, so the wallpaper is
@@ -52,31 +52,39 @@ export function Banner({
         <BannerWaves />
       </div>
 
-      <div className="relative flex h-full flex-col items-center justify-center px-6 text-center text-white">
-        {home ? (
-          <>
-            <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">
-              {siteConfig.title}
-            </h1>
-            <p className="mt-4 text-base opacity-90 sm:text-lg">
-              {siteConfig.subtitle}
-            </p>
-          </>
-        ) : (
-          <>
-            {/* The banner sits at the top of every non-home page, so its title
-                is the page's `h1` — the content below must not repeat it. */}
-            <h1 className="max-w-3xl text-2xl font-semibold tracking-tight sm:text-3xl">
-              {title}
-            </h1>
-            {description ? (
-              <p className="mt-3 max-w-2xl text-sm opacity-85 sm:text-base">
-                {description}
+      {/* The home masthead is an editorial front page, not a centered
+          template hero. On wide screens the title block anchors to the
+          bottom-left, sitting above the waves like a title page; on phones it
+          stays vertically centered so the block does not float in a short
+          field. The title and subtitle both use WenKai so the front door
+          speaks in the same face as the prose. Inner pages keep a centered
+          header because there the banner is a page label, not the front
+          door. */}
+      {home ? (
+        <div className="relative flex h-full items-center px-4 text-white sm:items-end sm:pb-44">
+          <div className="mx-auto w-full max-w-[96rem]">
+            <div className="max-w-3xl">
+              <h1 className="text-balance font-serif text-5xl font-semibold leading-[1.06] tracking-tight sm:text-7xl">
+                {siteConfig.title}
+              </h1>
+              <p className="mt-4 max-w-xl font-serif text-lg leading-relaxed text-white/80 sm:mt-5 sm:text-xl">
+                {siteConfig.subtitle}
               </p>
-            ) : null}
-          </>
-        )}
-      </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="relative flex h-full flex-col items-center justify-center px-6 text-center text-white">
+          <h1 className="max-w-3xl text-2xl font-semibold tracking-tight sm:text-3xl">
+            {title}
+          </h1>
+          {description ? (
+            <p className="mt-3 max-w-2xl text-sm text-white/85 sm:text-base">
+              {description}
+            </p>
+          ) : null}
+        </div>
+      )}
     </div>
   );
 }
