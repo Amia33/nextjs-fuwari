@@ -1,4 +1,3 @@
-@import "../node_modules/katex/dist/katex.min.css";
 @import "tailwindcss";
 @import "../src/styles/themes.css";
 @import "../src/styles/fonts.css";
